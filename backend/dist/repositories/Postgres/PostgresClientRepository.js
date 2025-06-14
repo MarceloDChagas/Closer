@@ -18,40 +18,41 @@ let PostgresClientRepository = class PostgresClientRepository {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async save(client) {
-        const prismaData = ClientMapper_1.ClientMapper.toPrisma(client);
-        await this.prisma.client.upsert({
-            where: { id: client.id.value },
-            update: prismaData,
-            create: prismaData,
+    async create(client) {
+        await this.prisma.client.create({
+            data: {
+                ...(0, ClientMapper_1.mapToPrisma)(client),
+                id: client.id.value,
+                createdAt: new Date(),
+            },
         });
     }
     async findById(id) {
-        const prismaClient = await this.prisma.client.findUnique({
+        const client = await this.prisma.client.findUnique({
             where: { id },
+            include: {
+                payments: true
+            }
         });
-        return prismaClient ? ClientMapper_1.ClientMapper.toDomain(prismaClient) : null;
+        return client ? (0, ClientMapper_1.mapToDomain)(client) : null;
     }
-    async findByEmail(email) {
-        const prismaClient = await this.prisma.client.findUnique({
-            where: { email },
+    async findAll(paymentMethod) {
+        const clients = await this.prisma.client.findMany({
+            where: paymentMethod ? {
+                payments: {
+                    some: {
+                        method: paymentMethod
+                    }
+                }
+            } : undefined,
+            include: {
+                payments: true
+            }
         });
-        return prismaClient ? ClientMapper_1.ClientMapper.toDomain(prismaClient) : null;
-    }
-    async findByPhone(phone) {
-        const prismaClient = await this.prisma.client.findUnique({
-            where: { phone },
-        });
-        return prismaClient ? ClientMapper_1.ClientMapper.toDomain(prismaClient) : null;
+        return clients.map(ClientMapper_1.mapToDomain);
     }
     async delete(id) {
-        await this.prisma.client.delete({
-            where: { id },
-        });
-    }
-    async findAll() {
-        const prismaClients = await this.prisma.client.findMany();
-        return prismaClients.map(ClientMapper_1.ClientMapper.toDomain);
+        await this.prisma.client.delete({ where: { id } });
     }
     async deleteAll() {
         await this.prisma.client.deleteMany();

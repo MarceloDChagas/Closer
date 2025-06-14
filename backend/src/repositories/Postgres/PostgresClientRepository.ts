@@ -1,56 +1,52 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaService } from "../PrismaService";
+import { Client } from "../../shared/Client/types/Client";
 import { IClientRepository } from "../IClientRepository";
-import { Client } from "@shared/Client/types/Client";
-import { ClientMapper } from "./mappers/ClientMapper";
+import { PrismaService } from "../PrismaService";
+import { mapToDomain, mapToPrisma } from "./mappers/ClientMapper";
+import { EPaymentMethod } from "../../shared/Payment/enums/EPaymentMethod";
 
 @Injectable()
 export class PostgresClientRepository implements IClientRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async save(client: Client): Promise<void> {
-    const prismaData = ClientMapper.toPrisma(client);
-    
-    await this.prisma.client.upsert({
-      where: { id: client.id.value },
-      update: prismaData,
-      create: prismaData,
+  async create(client: Client): Promise<void> {
+    await this.prisma.client.create({
+      data: {
+        ...mapToPrisma(client),
+        id: client.id.value,
+        createdAt: new Date(),
+      },
     });
   }
 
   async findById(id: string): Promise<Client | null> {
-    const prismaClient = await this.prisma.client.findUnique({
+    const client = await this.prisma.client.findUnique({ 
       where: { id },
+      include: {
+        payments: true
+      }
     });
-
-    return prismaClient ? ClientMapper.toDomain(prismaClient) : null;
+    return client ? mapToDomain(client) : null;
   }
 
-  async findByEmail(email: string): Promise<Client | null> {
-    const prismaClient = await this.prisma.client.findUnique({
-      where: { email },
+  async findAll(paymentMethod?: EPaymentMethod): Promise<Client[]> {
+    const clients = await this.prisma.client.findMany({
+      where: paymentMethod ? {
+        payments: {
+          some: {
+            method: paymentMethod
+          }
+        }
+      } : undefined,
+      include: {
+        payments: true
+      }
     });
-
-    return prismaClient ? ClientMapper.toDomain(prismaClient) : null;
-  }
-
-  async findByPhone(phone: string): Promise<Client | null> {
-    const prismaClient = await this.prisma.client.findUnique({
-      where: { phone },
-    });
-
-    return prismaClient ? ClientMapper.toDomain(prismaClient) : null;
+    return clients.map(mapToDomain);
   }
 
   async delete(id: string): Promise<void> {
-    await this.prisma.client.delete({
-      where: { id },
-    });
-  }
-
-  async findAll(): Promise<Client[]> {
-    const prismaClients = await this.prisma.client.findMany();
-    return prismaClients.map(ClientMapper.toDomain);
+    await this.prisma.client.delete({ where: { id } });
   }
 
   async deleteAll(): Promise<void> {

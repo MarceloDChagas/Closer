@@ -1,6 +1,6 @@
 import { PrismaService } from "../PrismaService";
-import { Session } from "@shared/Session/types/Session";
-import ISessionRepository from "../ISessionRepository";
+import { Session } from "../../shared/Session/types/Session";
+import { ISessionRepository } from "../ISessionRepository";
 export declare class PostgresSessionRepository implements ISessionRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);
@@ -13,4 +13,6 @@ export declare class PostgresSessionRepository implements ISessionRepository {
     findAll(): Promise<Session[]>;
     findAvailableSessionsByDate(date: Date): Promise<Session[]>;
     hasAvailableSession(clientId: string, date: Date): Promise<boolean>;
+    create(session: Session): Promise<void>;
+    deleteAll(): Promise<void>;
 }

@@ -14,11 +14,17 @@ require("reflect-metadata");
 const class_validator_1 = require("class-validator");
 const ESessionStatus_1 = require("../enums/ESessionStatus");
 class CreateSessionDto {
+    clientId;
     date;
     duration;
     status;
 }
 exports.CreateSessionDto = CreateSessionDto;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateSessionDto.prototype, "clientId", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsDateString)(),
@@ -27,6 +33,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsPositive)(),
     __metadata("design:type", Number)
 ], CreateSessionDto.prototype, "duration", void 0);
 __decorate([

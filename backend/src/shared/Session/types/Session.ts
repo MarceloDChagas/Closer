@@ -1,8 +1,10 @@
+import { SessionId } from "../vo/SessionId";
 import { SystemClock } from "../vo/SystemClock";
 
-export interface Session {
-  id: string;
+export type Session = {
+  id: SessionId;
   date: SystemClock;
   duration: number;
   status: string;
-} 
+  clientId: string;
+}; 

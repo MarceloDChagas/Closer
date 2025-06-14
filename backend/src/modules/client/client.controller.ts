@@ -8,10 +8,12 @@ import {
     HttpStatus,
     HttpCode,
     NotFoundException,
+    Query,
   } from "@nestjs/common";
   import { ClientService } from "./client.service";
   import { CreateClientDto } from "@shared/Client/dto/CreateClientDto";
   import { ClientResponseDto } from "@shared/Client/dto/ClientResponseDto";
+  import { EPaymentMethod } from "../../shared/Payment/enums/EPaymentMethod";
   
   @Controller("clients")
   export class ClientController {
@@ -25,8 +27,8 @@ import {
     }
 
     @Get()
-    async findAllClients() {
-      const clients = await this.clientService.findAllClients();
+    async findAllClients(@Query('paymentMethod') paymentMethod?: EPaymentMethod) {
+      const clients = await this.clientService.findAllClients(paymentMethod);
       return clients.map(client => ClientResponseDto.fromDomain(client));
     }
 

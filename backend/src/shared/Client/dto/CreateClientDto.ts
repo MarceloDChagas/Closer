@@ -1,6 +1,8 @@
-import { IsNotEmpty, IsString, IsEmail } from "class-validator";
-  
-export class CreateClientDto {
+import "reflect-metadata";
+import { IsNotEmpty, IsString, IsEmail, IsObject, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
+
+class NameDto {
   @IsNotEmpty()
   @IsString()
   firstName!: string;
@@ -8,15 +10,9 @@ export class CreateClientDto {
   @IsNotEmpty()
   @IsString()
   lastName!: string;
+}
 
-  @IsNotEmpty()
-  @IsEmail()
-  email!: string;
-
-  @IsNotEmpty()
-  @IsString()
-  phone!: string;
-
+class AddressDto {
   @IsNotEmpty()
   @IsString()
   street!: string;
@@ -32,4 +28,26 @@ export class CreateClientDto {
   @IsNotEmpty()
   @IsString()
   zipCode!: string;
+}
+
+export class CreateClientDto {
+  @IsNotEmpty()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => NameDto)
+  name!: NameDto;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  phone!: string;
+
+  @IsNotEmpty()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => AddressDto)
+  address!: AddressDto;
 } 

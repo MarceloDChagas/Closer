@@ -1,8 +1,16 @@
 import "reflect-metadata";
-import { IsNotEmpty, IsString, IsNumber, IsPositive, IsEnum } from "class-validator";
+import { IsNotEmpty, IsString, IsNumber, IsPositive, IsEnum, IsOptional } from "class-validator";
 import { EPaymentMethod } from "../enums/EPaymentMethod";
 
 export class CreatePaymentDto {
+  @IsNotEmpty()
+  @IsString()
+  clientId!: string;
+
+  @IsOptional()
+  @IsString()
+  sessionId?: string;
+
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()

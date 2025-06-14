@@ -10,28 +10,63 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateClientDto = void 0;
+require("reflect-metadata");
 const class_validator_1 = require("class-validator");
-class CreateClientDto {
+const class_transformer_1 = require("class-transformer");
+class NameDto {
     firstName;
     lastName;
-    email;
-    phone;
+}
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], NameDto.prototype, "firstName", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], NameDto.prototype, "lastName", void 0);
+class AddressDto {
     street;
     city;
     state;
     zipCode;
 }
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AddressDto.prototype, "street", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AddressDto.prototype, "city", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AddressDto.prototype, "state", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AddressDto.prototype, "zipCode", void 0);
+class CreateClientDto {
+    name;
+    email;
+    phone;
+    address;
+}
 exports.CreateClientDto = CreateClientDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateClientDto.prototype, "firstName", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateClientDto.prototype, "lastName", void 0);
+    (0, class_validator_1.IsObject)(),
+    (0, class_validator_1.ValidateNested)(),
+    (0, class_transformer_1.Type)(() => NameDto),
+    __metadata("design:type", NameDto)
+], CreateClientDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsEmail)(),
@@ -44,22 +79,9 @@ __decorate([
 ], CreateClientDto.prototype, "phone", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateClientDto.prototype, "street", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateClientDto.prototype, "city", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateClientDto.prototype, "state", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateClientDto.prototype, "zipCode", void 0);
+    (0, class_validator_1.IsObject)(),
+    (0, class_validator_1.ValidateNested)(),
+    (0, class_transformer_1.Type)(() => AddressDto),
+    __metadata("design:type", AddressDto)
+], CreateClientDto.prototype, "address", void 0);
 //# sourceMappingURL=CreateClientDto.js.map

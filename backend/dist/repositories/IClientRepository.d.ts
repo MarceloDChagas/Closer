@@ -1,11 +1,10 @@
-import { Client } from "@shared/Client/types/Client";
+import { Client } from "../shared/Client/types/Client";
+import { EPaymentMethod } from "../shared/Payment/enums/EPaymentMethod";
 export interface IClientRepository {
-    save(client: Client): Promise<void>;
+    create(client: Client): Promise<void>;
     findById(id: string): Promise<Client | null>;
-    findByEmail(email: string): Promise<Client | null>;
-    findByPhone(phone: string): Promise<Client | null>;
+    findAll(paymentMethod?: EPaymentMethod): Promise<Client[]>;
     delete(id: string): Promise<void>;
-    findAll(): Promise<Client[]>;
     deleteAll(): Promise<void>;
 }
 export default IClientRepository;

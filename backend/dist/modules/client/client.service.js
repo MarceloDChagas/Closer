@@ -26,30 +26,28 @@ let ClientService = class ClientService {
         this.clientRepository = clientRepository;
     }
     async createClient(createClientDto) {
+        const name = new Name_1.Name(createClientDto.name.firstName, createClientDto.name.lastName);
+        const email = new Email_1.Email(createClientDto.email);
+        const phone = new Phone_1.Phone(createClientDto.phone);
+        const address = new Address_1.Address(createClientDto.address.street, createClientDto.address.city, createClientDto.address.state, createClientDto.address.zipCode);
         const client = {
-            id: new ClientId_1.ClientId(),
-            name: new Name_1.Name(createClientDto.firstName, createClientDto.lastName),
-            email: new Email_1.Email(createClientDto.email),
-            phone: new Phone_1.Phone(createClientDto.phone),
-            address: new Address_1.Address(createClientDto.street, createClientDto.city, createClientDto.state, createClientDto.zipCode),
+            id: new ClientId_1.ClientId(crypto.randomUUID()),
+            name,
+            email,
+            phone,
+            address,
         };
-        await this.clientRepository.save(client);
+        await this.clientRepository.create(client);
         return client;
     }
     async findClientById(id) {
         return this.clientRepository.findById(id);
     }
-    async findClientByEmail(email) {
-        return this.clientRepository.findByEmail(email);
-    }
-    async findClientByPhone(phone) {
-        return this.clientRepository.findByPhone(phone);
-    }
     async deleteClient(id) {
         await this.clientRepository.delete(id);
     }
-    async findAllClients() {
-        return this.clientRepository.findAll();
+    async findAllClients(paymentMethod) {
+        return this.clientRepository.findAll(paymentMethod);
     }
     async deleteAllClients() {
         await this.clientRepository.deleteAll();

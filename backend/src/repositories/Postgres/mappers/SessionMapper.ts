@@ -1,23 +1,32 @@
 import { Session } from "@shared/Session/types/Session";
-import { ESessionStatus } from "@shared/Session/enums/ESessionStatus";
+import { SessionId } from "@shared/Session/vo/SessionId";
 import { SystemClock } from "@shared/Session/vo/SystemClock";
 
-export class SessionMapper {
-  static toDomain(prismaSession: any): Session {
-    return {
-      id: prismaSession.id,
-      date: new SystemClock(new Date(prismaSession.date)),
-      duration: prismaSession.duration,
-      status: prismaSession.status as ESessionStatus,
-    };
-  }
+type PrismaSession = {
+  id: string;
+  date: Date;
+  duration: number;
+  status: string;
+  clientId: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-  static toPrisma(session: Session): any {
-    return {
-      id: session.id,
-      date: session.date.value,
-      duration: session.duration,
-      status: session.status,
-    };
-  }
+export function mapToPrisma(session: Session): Omit<PrismaSession, "id" | "createdAt" | "updatedAt"> {
+  return {
+    date: session.date.value,
+    duration: session.duration,
+    status: session.status,
+    clientId: session.clientId,
+  };
+}
+
+export function mapToDomain(session: PrismaSession): Session {
+  return {
+    id: new SessionId(session.id),
+    date: new SystemClock(session.date),
+    duration: session.duration,
+    status: session.status,
+    clientId: session.clientId,
+  };
 } 

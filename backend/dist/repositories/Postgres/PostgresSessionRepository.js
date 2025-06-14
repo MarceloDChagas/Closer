@@ -19,22 +19,20 @@ let PostgresSessionRepository = class PostgresSessionRepository {
         this.prisma = prisma;
     }
     async save(session) {
-        const prismaData = SessionMapper_1.SessionMapper.toPrisma(session);
+        const prismaData = (0, SessionMapper_1.mapToPrisma)(session);
         await this.prisma.session.create({
             data: prismaData,
         });
     }
     async findById(id) {
-        const prismaSession = await this.prisma.session.findUnique({
-            where: { id },
-        });
-        return prismaSession ? SessionMapper_1.SessionMapper.toDomain(prismaSession) : null;
+        const session = await this.prisma.session.findUnique({ where: { id } });
+        return session ? (0, SessionMapper_1.mapToDomain)(session) : null;
     }
     async findSessionsByClientId(clientId) {
         const prismaSessions = await this.prisma.session.findMany({
             where: { clientId },
         });
-        return prismaSessions.map(SessionMapper_1.SessionMapper.toDomain);
+        return prismaSessions.map(SessionMapper_1.mapToDomain);
     }
     async findSessionsInInterval(start, end) {
         const prismaSessions = await this.prisma.session.findMany({
@@ -45,35 +43,45 @@ let PostgresSessionRepository = class PostgresSessionRepository {
                 },
             },
         });
-        return prismaSessions.map(SessionMapper_1.SessionMapper.toDomain);
+        return prismaSessions.map(SessionMapper_1.mapToDomain);
     }
     async delete(id) {
-        await this.prisma.session.delete({
-            where: { id },
-        });
+        await this.prisma.session.delete({ where: { id } });
     }
     async update(session) {
-        const prismaData = SessionMapper_1.SessionMapper.toPrisma(session);
+        const prismaData = (0, SessionMapper_1.mapToPrisma)(session);
         await this.prisma.session.update({
             where: { id: session.id },
             data: prismaData,
         });
     }
     async findAll() {
-        const prismaSessions = await this.prisma.session.findMany();
-        return prismaSessions.map(SessionMapper_1.SessionMapper.toDomain);
+        const sessions = await this.prisma.session.findMany();
+        return sessions.map(SessionMapper_1.mapToDomain);
     }
     async findAvailableSessionsByDate(date) {
         const prismaSessions = await this.prisma.session.findMany({
             where: { date },
         });
-        return prismaSessions.map(SessionMapper_1.SessionMapper.toDomain);
+        return prismaSessions.map(SessionMapper_1.mapToDomain);
     }
     async hasAvailableSession(clientId, date) {
         const prismaSession = await this.prisma.session.findFirst({
             where: { clientId, date },
         });
         return prismaSession ? true : false;
+    }
+    async create(session) {
+        await this.prisma.session.create({
+            data: {
+                ...(0, SessionMapper_1.mapToPrisma)(session),
+                id: session.id.toString(),
+                createdAt: new Date(),
+            },
+        });
+    }
+    async deleteAll() {
+        await this.prisma.session.deleteMany();
     }
 };
 exports.PostgresSessionRepository = PostgresSessionRepository;

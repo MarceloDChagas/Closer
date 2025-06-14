@@ -1,38 +1,49 @@
-import { Prisma } from "@prisma/client";
-import { Client } from "@shared/Client/types/Client";
-import { Name } from "@shared/Client/vo/Name";
-import { Email } from "@shared/Client/vo/Email";
-import { Phone } from "@shared/Client/vo/Phone";
-import { Address } from "@shared/Client/vo/Address";
-import { ClientId } from "@shared/Client/vo/ClientId";
+import { Client } from "../../../shared/Client/types/Client";
+import { ClientId } from "../../../shared/Client/vo/ClientId";
+import { Name } from "../../../shared/Client/vo/Name";
+import { Email } from "../../../shared/Client/vo/Email";
+import { Phone } from "../../../shared/Client/vo/Phone";
+import { Address } from "../../../shared/Client/vo/Address";
 
-export class ClientMapper {
-  static toDomain(prismaClient: any): Client {
-    return {
-      id: new ClientId(prismaClient.id),
-      name: new Name(prismaClient.firstName, prismaClient.lastName),
-      email: new Email(prismaClient.email),
-      phone: new Phone(prismaClient.phone),
-      address: new Address(
-        prismaClient.street,
-        prismaClient.city,
-        prismaClient.state,
-        prismaClient.zipCode
-      ),
-    };
-  }
+type PrismaClient = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  createdAt: Date;
+  updatedAt: Date;
+  payments?: any[];
+};
 
-  static toPrisma(client: Client): any {
-    return {
-      id: client.id.value,
-      firstName: client.name.firstName,
-      lastName: client.name.lastName,
-      email: client.email.value,
-      phone: client.phone.value,
-      street: client.address.street,
-      city: client.address.city,
-      state: client.address.state,
-      zipCode: client.address.zipCode,
-    };
-  }
+export function mapToPrisma(client: Client): Omit<PrismaClient, "id" | "createdAt" | "updatedAt"> {
+  return {
+    firstName: client.name.firstName,
+    lastName: client.name.lastName,
+    email: client.email.value,
+    phone: client.phone.value,
+    street: client.address.street,
+    city: client.address.city,
+    state: client.address.state,
+    zipCode: client.address.zipCode,
+  };
+}
+
+export function mapToDomain(client: PrismaClient): Client {
+  return {
+    id: new ClientId(client.id),
+    name: new Name(client.firstName, client.lastName),
+    email: new Email(client.email),
+    phone: new Phone(client.phone),
+    address: new Address(
+      client.street,
+      client.city,
+      client.state,
+      client.zipCode
+    ),
+  };
 } 

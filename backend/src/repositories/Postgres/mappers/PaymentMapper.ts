@@ -1,5 +1,6 @@
-import { Payment } from "../../../shared/Payment/types/Payment"
-import { EPaymentMethod } from "../../../shared/Payment/enums/EPaymentMethod"
+import { Payment } from "@shared/Payment/types/Payment"
+import { PaymentId } from "@shared/Payment/vo/PaymentId"
+import { EPaymentMethod } from "@shared/Payment/enums/EPaymentMethod"
 
 type PrismaPayment = {
   id: string
@@ -7,6 +8,8 @@ type PrismaPayment = {
   status: string
   currency: string
   method: string
+  clientId: string
+  sessionId: string | null
   createdAt: Date
   updatedAt: Date
 }
@@ -17,16 +20,20 @@ export function mapToPrisma(payment: Payment): Omit<PrismaPayment, "id" | "creat
     status: payment.status,
     currency: payment.currency,
     method: payment.method,
+    clientId: payment.clientId,
+    sessionId: payment.sessionId || null,
   }
 }
 
 export function mapToDomain(payment: PrismaPayment): Payment {
   return {
-    id: payment.id,
+    id: new PaymentId(payment.id),
     amount: payment.amount,
     status: payment.status,
     currency: payment.currency,
     method: payment.method as EPaymentMethod,
+    clientId: payment.clientId,
+    sessionId: payment.sessionId || undefined,
     createdAt: payment.createdAt,
   }
 }

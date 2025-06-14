@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const client_service_1 = require("./client.service");
 const CreateClientDto_1 = require("../../shared/Client/dto/CreateClientDto");
 const ClientResponseDto_1 = require("../../shared/Client/dto/ClientResponseDto");
+const EPaymentMethod_1 = require("../../shared/Payment/enums/EPaymentMethod");
 let ClientController = class ClientController {
     clientService;
     constructor(clientService) {
@@ -26,8 +27,8 @@ let ClientController = class ClientController {
         const client = await this.clientService.createClient(createClientDto);
         return ClientResponseDto_1.ClientResponseDto.fromDomain(client);
     }
-    async findAllClients() {
-        const clients = await this.clientService.findAllClients();
+    async findAllClients(paymentMethod) {
+        const clients = await this.clientService.findAllClients(paymentMethod);
         return clients.map(client => ClientResponseDto_1.ClientResponseDto.fromDomain(client));
     }
     async findClientById(id) {
@@ -59,8 +60,9 @@ __decorate([
 ], ClientController.prototype, "createClient", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('paymentMethod')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ClientController.prototype, "findAllClients", null);
 __decorate([

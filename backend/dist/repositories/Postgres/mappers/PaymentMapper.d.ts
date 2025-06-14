@@ -1,10 +1,12 @@
-import { Payment } from "../../../shared/Payment/types/Payment";
+import { Payment } from "@shared/Payment/types/Payment";
 type PrismaPayment = {
     id: string;
     amount: number;
     status: string;
     currency: string;
     method: string;
+    clientId: string;
+    sessionId: string | null;
     createdAt: Date;
     updatedAt: Date;
 };

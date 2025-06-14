@@ -1,9 +1,8 @@
-import { Injectable, Inject, BadRequestException } from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { IPaymentRepository } from "../../repositories/IPaymentRepository";
-import { Payment } from "../../shared/Payment/types/Payment";
-import { CreatePaymentDto } from "../../shared/Payment/dto/CreatePaymentDto";
-import { PaymentStatus } from "../../shared/Payment/enums/EPaymentStatus";
-import { EPaymentMethod } from "../../shared/Payment/enums/EPaymentMethod";
+import { Payment } from "@shared/Payment/types/Payment";
+import { CreatePaymentDto } from "@shared/Payment/dto/CreatePaymentDto";
+import { PaymentId } from "@shared/Payment/vo/PaymentId";
 
 const PAYMENT_REPOSITORY = 'PAYMENT_REPOSITORY';
 
@@ -15,16 +14,14 @@ export class PaymentService {
   ) {}
 
   async createPayment(createPaymentDto: CreatePaymentDto): Promise<Payment> {
-    if (!Object.values(PaymentStatus).includes(createPaymentDto.status as PaymentStatus)) {
-      throw new BadRequestException(`Invalid payment status. Must be one of: ${Object.values(PaymentStatus).join(', ')}`);
-    }
-
     const payment: Payment = {
-      id: crypto.randomUUID(),
+      id: new PaymentId(crypto.randomUUID()),
       amount: createPaymentDto.amount,
-      currency: createPaymentDto.currency,
       status: createPaymentDto.status,
+      currency: createPaymentDto.currency,
       method: createPaymentDto.method,
+      clientId: createPaymentDto.clientId,
+      sessionId: createPaymentDto.sessionId,
       createdAt: new Date(),
     };
 

@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentService = void 0;
 const common_1 = require("@nestjs/common");
-const EPaymentStatus_1 = require("../../shared/Payment/enums/EPaymentStatus");
+const PaymentId_1 = require("../../shared/Payment/vo/PaymentId");
 const PAYMENT_REPOSITORY = 'PAYMENT_REPOSITORY';
 let PaymentService = class PaymentService {
     paymentRepository;
@@ -22,15 +22,14 @@ let PaymentService = class PaymentService {
         this.paymentRepository = paymentRepository;
     }
     async createPayment(createPaymentDto) {
-        if (!Object.values(EPaymentStatus_1.PaymentStatus).includes(createPaymentDto.status)) {
-            throw new common_1.BadRequestException(`Invalid payment status. Must be one of: ${Object.values(EPaymentStatus_1.PaymentStatus).join(', ')}`);
-        }
         const payment = {
-            id: crypto.randomUUID(),
+            id: new PaymentId_1.PaymentId(crypto.randomUUID()),
             amount: createPaymentDto.amount,
-            currency: createPaymentDto.currency,
             status: createPaymentDto.status,
+            currency: createPaymentDto.currency,
             method: createPaymentDto.method,
+            clientId: createPaymentDto.clientId,
+            sessionId: createPaymentDto.sessionId,
             createdAt: new Date(),
         };
         await this.paymentRepository.create(payment);

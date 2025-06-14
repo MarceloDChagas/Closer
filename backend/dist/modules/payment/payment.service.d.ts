@@ -1,6 +1,6 @@
 import { IPaymentRepository } from "../../repositories/IPaymentRepository";
-import { Payment } from "../../shared/Payment/types/Payment";
-import { CreatePaymentDto } from "../../shared/Payment/dto/CreatePaymentDto";
+import { Payment } from "@shared/Payment/types/Payment";
+import { CreatePaymentDto } from "@shared/Payment/dto/CreatePaymentDto";
 export declare class PaymentService {
     private readonly paymentRepository;
     constructor(paymentRepository: IPaymentRepository);

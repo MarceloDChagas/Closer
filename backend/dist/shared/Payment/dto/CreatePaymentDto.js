@@ -14,12 +14,24 @@ require("reflect-metadata");
 const class_validator_1 = require("class-validator");
 const EPaymentMethod_1 = require("../enums/EPaymentMethod");
 class CreatePaymentDto {
+    clientId;
+    sessionId;
     amount;
     currency;
     status;
     method;
 }
 exports.CreatePaymentDto = CreatePaymentDto;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreatePaymentDto.prototype, "clientId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreatePaymentDto.prototype, "sessionId", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsNumber)(),

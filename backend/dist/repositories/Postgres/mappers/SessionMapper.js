@@ -1,24 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SessionMapper = void 0;
+exports.mapToPrisma = mapToPrisma;
+exports.mapToDomain = mapToDomain;
+const SessionId_1 = require("../../../shared/Session/vo/SessionId");
 const SystemClock_1 = require("../../../shared/Session/vo/SystemClock");
-class SessionMapper {
-    static toDomain(prismaSession) {
-        return {
-            id: prismaSession.id,
-            date: new SystemClock_1.SystemClock(new Date(prismaSession.date)),
-            duration: prismaSession.duration,
-            status: prismaSession.status,
-        };
-    }
-    static toPrisma(session) {
-        return {
-            id: session.id,
-            date: session.date.value,
-            duration: session.duration,
-            status: session.status,
-        };
-    }
+function mapToPrisma(session) {
+    return {
+        date: session.date.value,
+        duration: session.duration,
+        status: session.status,
+        clientId: session.clientId,
+    };
 }
-exports.SessionMapper = SessionMapper;
+function mapToDomain(session) {
+    return {
+        id: new SessionId_1.SessionId(session.id),
+        date: new SystemClock_1.SystemClock(session.date),
+        duration: session.duration,
+        status: session.status,
+        clientId: session.clientId,
+    };
+}
 //# sourceMappingURL=SessionMapper.js.map

@@ -1,33 +1,25 @@
 import { Payment } from "../types/Payment";
-import { Expose } from "class-transformer";
 
 export class PaymentResponseDto {
-  @Expose()
   id!: string;
-
-  @Expose()
   amount!: number;
-
-  @Expose()
-  currency!: string;
-
-  @Expose()
   status!: string;
-
-  @Expose()
+  currency!: string;
   method!: string;
-
-  @Expose()
-  createdAt!: Date;
+  clientId!: string;
+  sessionId?: string;
+  createdAt!: string;
 
   static fromDomain(payment: Payment): PaymentResponseDto {
     const dto = new PaymentResponseDto();
-    dto.id = payment.id;
+    dto.id = payment.id.toString();
     dto.amount = payment.amount;
-    dto.currency = payment.currency;
     dto.status = payment.status;
+    dto.currency = payment.currency;
     dto.method = payment.method;
-    dto.createdAt = payment.createdAt;
+    dto.clientId = payment.clientId;
+    dto.sessionId = payment.sessionId;
+    dto.createdAt = payment.createdAt.toISOString();
     return dto;
   }
 } 

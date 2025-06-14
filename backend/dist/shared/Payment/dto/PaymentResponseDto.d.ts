@@ -2,9 +2,11 @@ import { Payment } from "../types/Payment";
 export declare class PaymentResponseDto {
     id: string;
     amount: number;
-    currency: string;
     status: string;
+    currency: string;
     method: string;
-    createdAt: Date;
+    clientId: string;
+    sessionId?: string;
+    createdAt: string;
     static fromDomain(payment: Payment): PaymentResponseDto;
 }

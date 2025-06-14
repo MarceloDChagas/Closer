@@ -1,4 +1,4 @@
-import { Injectable, Inject, BadRequestException } from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { IClientRepository } from "../../repositories/IClientRepository";
 import { Client } from "@shared/Client/types/Client";
 import { CreateClientDto } from "@shared/Client/dto/CreateClientDto";
@@ -7,6 +7,7 @@ import { Email } from "@shared/Client/vo/Email";
 import { Phone } from "@shared/Client/vo/Phone";
 import { Address } from "@shared/Client/vo/Address";
 import { ClientId } from "@shared/Client/vo/ClientId";
+import { EPaymentMethod } from "../../shared/Payment/enums/EPaymentMethod";
 
 const CLIENT_REPOSITORY = 'CLIENT_REPOSITORY';
 
@@ -18,20 +19,25 @@ export class ClientService {
   ) {}
 
   async createClient(createClientDto: CreateClientDto): Promise<Client> {
+    const name = new Name(createClientDto.name.firstName, createClientDto.name.lastName);
+    const email = new Email(createClientDto.email);
+    const phone = new Phone(createClientDto.phone);
+    const address = new Address(
+      createClientDto.address.street,
+      createClientDto.address.city,
+      createClientDto.address.state,
+      createClientDto.address.zipCode
+    );
+
     const client: Client = {
-      id: new ClientId(),
-      name: new Name(createClientDto.firstName, createClientDto.lastName),
-      email: new Email(createClientDto.email),
-      phone: new Phone(createClientDto.phone),
-      address: new Address(
-        createClientDto.street,
-        createClientDto.city,
-        createClientDto.state,
-        createClientDto.zipCode
-      ),
+      id: new ClientId(crypto.randomUUID()),
+      name,
+      email,
+      phone,
+      address,
     };
 
-    await this.clientRepository.save(client);
+    await this.clientRepository.create(client);
     return client;
   }
 
@@ -39,20 +45,12 @@ export class ClientService {
     return this.clientRepository.findById(id);
   }
 
-  async findClientByEmail(email: string): Promise<Client | null> {
-    return this.clientRepository.findByEmail(email);
-  }
-
-  async findClientByPhone(phone: string): Promise<Client | null> {
-    return this.clientRepository.findByPhone(phone);
-  }
-
   async deleteClient(id: string): Promise<void> {
     await this.clientRepository.delete(id);
   }
 
-  async findAllClients(): Promise<Client[]> {
-    return this.clientRepository.findAll();
+  async findAllClients(paymentMethod?: EPaymentMethod): Promise<Client[]> {
+    return this.clientRepository.findAll(paymentMethod);
   }
 
   async deleteAllClients(): Promise<void> {
