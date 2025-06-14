@@ -12,10 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreatePaymentDto = void 0;
 require("reflect-metadata");
 const class_validator_1 = require("class-validator");
+const EPaymentMethod_1 = require("../enums/EPaymentMethod");
 class CreatePaymentDto {
     amount;
     currency;
     status;
+    method;
 }
 exports.CreatePaymentDto = CreatePaymentDto;
 __decorate([
@@ -34,4 +36,9 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreatePaymentDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsEnum)(EPaymentMethod_1.EPaymentMethod),
+    __metadata("design:type", String)
+], CreatePaymentDto.prototype, "method", void 0);
 //# sourceMappingURL=CreatePaymentDto.js.map

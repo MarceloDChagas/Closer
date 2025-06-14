@@ -52,4 +52,8 @@ export class PostgresClientRepository implements IClientRepository {
     const prismaClients = await this.prisma.client.findMany();
     return prismaClients.map(ClientMapper.toDomain);
   }
+
+  async deleteAll(): Promise<void> {
+    await this.prisma.client.deleteMany();
+  }
 } 

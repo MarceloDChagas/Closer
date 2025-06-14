@@ -1,4 +1,4 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable, Inject, BadRequestException } from "@nestjs/common";
 import { IClientRepository } from "../../repositories/IClientRepository";
 import { Client } from "@shared/Client/types/Client";
 import { CreateClientDto } from "@shared/Client/dto/CreateClientDto";
@@ -53,5 +53,9 @@ export class ClientService {
 
   async findAllClients(): Promise<Client[]> {
     return this.clientRepository.findAll();
+  }
+
+  async deleteAllClients(): Promise<void> {
+    await this.clientRepository.deleteAll();
   }
 }

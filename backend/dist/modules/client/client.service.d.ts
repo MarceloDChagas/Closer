@@ -10,4 +10,5 @@ export declare class ClientService {
     findClientByPhone(phone: string): Promise<Client | null>;
     deleteClient(id: string): Promise<void>;
     findAllClients(): Promise<Client[]>;
+    deleteAllClients(): Promise<void>;
 }

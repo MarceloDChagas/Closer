@@ -16,6 +16,7 @@ exports.ClientController = void 0;
 const common_1 = require("@nestjs/common");
 const client_service_1 = require("./client.service");
 const CreateClientDto_1 = require("../../shared/Client/dto/CreateClientDto");
+const ClientResponseDto_1 = require("../../shared/Client/dto/ClientResponseDto");
 let ClientController = class ClientController {
     clientService;
     constructor(clientService) {
@@ -23,64 +24,28 @@ let ClientController = class ClientController {
     }
     async createClient(createClientDto) {
         const client = await this.clientService.createClient(createClientDto);
-        return {
-            id: client.id.value,
-            name: {
-                firstName: client.name.firstName,
-                lastName: client.name.lastName,
-            },
-            email: client.email.value,
-            phone: client.phone.value,
-            address: {
-                street: client.address.street,
-                city: client.address.city,
-                state: client.address.state,
-                zipCode: client.address.zipCode,
-            },
-        };
+        return ClientResponseDto_1.ClientResponseDto.fromDomain(client);
     }
     async findAllClients() {
-        console.log("findAllClients");
         const clients = await this.clientService.findAllClients();
-        return clients.map(client => ({
-            id: client.id.value,
-            name: {
-                firstName: client.name.firstName,
-                lastName: client.name.lastName,
-            },
-            email: client.email.value,
-            phone: client.phone.value,
-            address: {
-                street: client.address.street,
-                city: client.address.city,
-                state: client.address.state,
-                zipCode: client.address.zipCode,
-            },
-        }));
+        return clients.map(client => ClientResponseDto_1.ClientResponseDto.fromDomain(client));
     }
     async findClientById(id) {
         const client = await this.clientService.findClientById(id);
         if (!client) {
-            return null;
+            throw new common_1.NotFoundException(`Client with ID ${id} not found`);
         }
-        return {
-            id: client.id.value,
-            name: {
-                firstName: client.name.firstName,
-                lastName: client.name.lastName,
-            },
-            email: client.email.value,
-            phone: client.phone.value,
-            address: {
-                street: client.address.street,
-                city: client.address.city,
-                state: client.address.state,
-                zipCode: client.address.zipCode,
-            },
-        };
+        return ClientResponseDto_1.ClientResponseDto.fromDomain(client);
     }
     async deleteClient(id) {
+        const client = await this.clientService.findClientById(id);
+        if (!client) {
+            throw new common_1.NotFoundException(`Client with ID ${id} not found`);
+        }
         await this.clientService.deleteClient(id);
+    }
+    async deleteAllClients() {
+        await this.clientService.deleteAllClients();
     }
 };
 exports.ClientController = ClientController;
@@ -113,6 +78,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ClientController.prototype, "deleteClient", null);
+__decorate([
+    (0, common_1.Delete)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ClientController.prototype, "deleteAllClients", null);
 exports.ClientController = ClientController = __decorate([
     (0, common_1.Controller)("clients"),
     __metadata("design:paramtypes", [client_service_1.ClientService])

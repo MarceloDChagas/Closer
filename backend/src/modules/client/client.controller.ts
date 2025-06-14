@@ -7,9 +7,11 @@ import {
     Param,
     HttpStatus,
     HttpCode,
+    NotFoundException,
   } from "@nestjs/common";
   import { ClientService } from "./client.service";
   import { CreateClientDto } from "@shared/Client/dto/CreateClientDto";
+  import { ClientResponseDto } from "@shared/Client/dto/ClientResponseDto";
   
   @Controller("clients")
   export class ClientController {
@@ -19,72 +21,38 @@ import {
     @HttpCode(HttpStatus.CREATED)
     async createClient(@Body() createClientDto: CreateClientDto) {
       const client = await this.clientService.createClient(createClientDto);
-      return {
-        id: client.id.value,
-        name: {
-          firstName: client.name.firstName,
-          lastName: client.name.lastName,
-        },
-        email: client.email.value,
-        phone: client.phone.value,
-        address: {
-          street: client.address.street,
-          city: client.address.city,
-          state: client.address.state,
-          zipCode: client.address.zipCode,
-        },
-      };
+      return ClientResponseDto.fromDomain(client);
     }
 
     @Get()
     async findAllClients() {
-      console.log("findAllClients");  
       const clients = await this.clientService.findAllClients();
-      return clients.map(client => ({
-        id: client.id.value,
-        name: {
-          firstName: client.name.firstName,
-          lastName: client.name.lastName,
-        },
-        email: client.email.value,
-        phone: client.phone.value,
-        address: {
-          street: client.address.street,
-          city: client.address.city,
-          state: client.address.state,
-          zipCode: client.address.zipCode,
-        },
-      }));
+      return clients.map(client => ClientResponseDto.fromDomain(client));
     }
 
     @Get(":id")
     async findClientById(@Param("id") id: string) {
       const client = await this.clientService.findClientById(id);
       if (!client) {
-        return null;
+        throw new NotFoundException(`Client with ID ${id} not found`);
       }
-  
-      return {
-        id: client.id.value,
-        name: {
-          firstName: client.name.firstName,
-          lastName: client.name.lastName,
-        },
-        email: client.email.value,
-        phone: client.phone.value,
-        address: {
-          street: client.address.street,
-          city: client.address.city,
-          state: client.address.state,
-          zipCode: client.address.zipCode,
-        },
-      };
+      return ClientResponseDto.fromDomain(client);
     }
   
     @Delete(":id")
     @HttpCode(HttpStatus.NO_CONTENT)
     async deleteClient(@Param("id") id: string) {
+      const client = await this.clientService.findClientById(id);
+      if (!client) {
+        throw new NotFoundException(`Client with ID ${id} not found`);
+      }
       await this.clientService.deleteClient(id);
+    }
+
+    @Delete()
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async deleteAllClients() {
+      await this.clientService.deleteAllClients();
     }
   }
   

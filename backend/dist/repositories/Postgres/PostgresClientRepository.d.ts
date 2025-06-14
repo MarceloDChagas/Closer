@@ -10,4 +10,5 @@ export declare class PostgresClientRepository implements IClientRepository {
     findByPhone(phone: string): Promise<Client | null>;
     delete(id: string): Promise<void>;
     findAll(): Promise<Client[]>;
+    deleteAll(): Promise<void>;
 }

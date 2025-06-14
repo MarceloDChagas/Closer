@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import { IsNotEmpty, IsString, IsNumber, IsPositive } from "class-validator";
+import { IsNotEmpty, IsString, IsNumber, IsPositive, IsEnum } from "class-validator";
+import { EPaymentMethod } from "../enums/EPaymentMethod";
 
 export class CreatePaymentDto {
   @IsNotEmpty()
@@ -14,4 +15,8 @@ export class CreatePaymentDto {
   @IsNotEmpty()
   @IsString()
   status!: string;
+
+  @IsNotEmpty()
+  @IsEnum(EPaymentMethod)
+  method!: EPaymentMethod;
 } 

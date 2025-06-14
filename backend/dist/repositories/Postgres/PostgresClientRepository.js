@@ -53,6 +53,9 @@ let PostgresClientRepository = class PostgresClientRepository {
         const prismaClients = await this.prisma.client.findMany();
         return prismaClients.map(ClientMapper_1.ClientMapper.toDomain);
     }
+    async deleteAll() {
+        await this.prisma.client.deleteMany();
+    }
 };
 exports.PostgresClientRepository = PostgresClientRepository;
 exports.PostgresClientRepository = PostgresClientRepository = __decorate([

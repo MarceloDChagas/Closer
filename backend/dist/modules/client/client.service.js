@@ -51,6 +51,9 @@ let ClientService = class ClientService {
     async findAllClients() {
         return this.clientRepository.findAll();
     }
+    async deleteAllClients() {
+        await this.clientRepository.deleteAll();
+    }
 };
 exports.ClientService = ClientService;
 exports.ClientService = ClientService = __decorate([
