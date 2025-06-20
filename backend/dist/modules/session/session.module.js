@@ -13,9 +13,8 @@ const session_service_1 = require("./session.service");
 const PostgresSessionRepository_1 = require("../../repositories/Postgres/PostgresSessionRepository");
 const PrismaService_1 = require("../../repositories/PrismaService");
 const SESSION_REPOSITORY = 'SESSION_REPOSITORY';
-let SessionModule = class SessionModule {
+let SessionModule = exports.SessionModule = class SessionModule {
 };
-exports.SessionModule = SessionModule;
 exports.SessionModule = SessionModule = __decorate([
     (0, common_1.Module)({
         controllers: [session_controller_1.SessionController],
@@ -27,7 +26,6 @@ exports.SessionModule = SessionModule = __decorate([
                 useClass: PostgresSessionRepository_1.PostgresSessionRepository,
             },
         ],
-        exports: [session_service_1.SessionService],
+        exports: [session_service_1.SessionService, PrismaService_1.PrismaService],
     })
 ], SessionModule);
-//# sourceMappingURL=session.module.js.map

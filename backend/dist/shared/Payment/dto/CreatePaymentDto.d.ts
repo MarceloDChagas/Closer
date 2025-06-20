@@ -1,5 +1,4 @@
-import "reflect-metadata";
-import { EPaymentMethod } from "../enums/EPaymentMethod";
+import { EPaymentMethod } from '../enums/EPaymentMethod';
 export declare class CreatePaymentDto {
     clientId: string;
     sessionId?: string;
@@ -7,4 +6,5 @@ export declare class CreatePaymentDto {
     currency: string;
     status: string;
     method: EPaymentMethod;
+    dueDate?: string;
 }

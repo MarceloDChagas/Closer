@@ -13,9 +13,8 @@ const payment_service_1 = require("./payment.service");
 const PrismaService_1 = require("../../repositories/PrismaService");
 const PostgresPaymentRepository_1 = require("../../repositories/Postgres/PostgresPaymentRepository");
 const PAYMENT_REPOSITORY = 'PAYMENT_REPOSITORY';
-let PaymentModule = class PaymentModule {
+let PaymentModule = exports.PaymentModule = class PaymentModule {
 };
-exports.PaymentModule = PaymentModule;
 exports.PaymentModule = PaymentModule = __decorate([
     (0, common_1.Module)({
         controllers: [payment_controller_1.PaymentController],
@@ -30,4 +29,3 @@ exports.PaymentModule = PaymentModule = __decorate([
         exports: [PAYMENT_REPOSITORY, payment_service_1.PaymentService],
     })
 ], PaymentModule);
-//# sourceMappingURL=payment.module.js.map

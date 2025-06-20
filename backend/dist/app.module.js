@@ -14,9 +14,11 @@ const app_service_1 = require("./app.service");
 const client_module_1 = require("./modules/client/client.module");
 const payment_module_1 = require("./modules/payment/payment.module");
 const session_module_1 = require("./modules/session/session.module");
-let AppModule = class AppModule {
+const dashboard_module_1 = require("./modules/dashboard/dashboard.module");
+const invoice_module_1 = require("./modules/invoice/invoice.module");
+const report_module_1 = require("./modules/report/report.module");
+let AppModule = exports.AppModule = class AppModule {
 };
-exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
@@ -24,9 +26,11 @@ exports.AppModule = AppModule = __decorate([
             client_module_1.ClientModule,
             payment_module_1.PaymentModule,
             session_module_1.SessionModule,
+            dashboard_module_1.DashboardModule,
+            invoice_module_1.InvoiceModule,
+            report_module_1.ReportModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
 ], AppModule);
-//# sourceMappingURL=app.module.js.map

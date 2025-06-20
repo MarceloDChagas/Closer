@@ -1,0 +1,23 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EServiceType = void 0;
+var EServiceType;
+(function (EServiceType) {
+    EServiceType["ACOMPANHAMENTO"] = "ACOMPANHAMENTO";
+    EServiceType["ANIVERSARIO"] = "ANIVERSARIO";
+    EServiceType["BOOK"] = "BOOK";
+    EServiceType["CASAL"] = "CASAL";
+    EServiceType["CASAMENTO"] = "CASAMENTO";
+    EServiceType["DIA_DAS_MAES"] = "DIA_DAS_MAES";
+    EServiceType["ENSAIO_FAMILIA"] = "ENSAIO_FAMILIA";
+    EServiceType["ENSAIO_FEMININO"] = "ENSAIO_FEMININO";
+    EServiceType["ENSAIO_GESTANTE"] = "ENSAIO_GESTANTE";
+    EServiceType["ENSAIO_INFANTIL"] = "ENSAIO_INFANTIL";
+    EServiceType["EVENTO"] = "EVENTO";
+    EServiceType["FORMATURA"] = "FORMATURA";
+    EServiceType["INSTITUCIONAL"] = "INSTITUCIONAL";
+    EServiceType["MEMORIAS_POLAROID"] = "MEMORIAS_POLAROID";
+    EServiceType["NEWBORN"] = "NEWBORN";
+    EServiceType["PARTO"] = "PARTO";
+    EServiceType["SMASH_THE_CAKE"] = "SMASH_THE_CAKE";
+})(EServiceType || (exports.EServiceType = EServiceType = {}));

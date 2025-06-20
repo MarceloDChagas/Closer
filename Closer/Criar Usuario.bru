@@ -5,7 +5,24 @@ meta {
 }
 
 post {
-  url: https://localhost:3006/clients
-  body: none
+  url: http://localhost:3006/clients
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+    "name": {
+      "firstName": "João",
+      "lastName": "Silva"
+    },
+    "email": "joao@email.com",
+    "phone": "11999999999",
+    "address": {
+      "street": "Rua A",
+      "city": "São Paulo",
+      "state": "SP",
+      "zipCode": "01234-567"
+    }
+  }
 }

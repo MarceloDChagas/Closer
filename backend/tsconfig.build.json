@@ -1,9 +1,11 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"],
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "composite": false
-  }
+    "target": "ES2020",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false,
+    "sourceMap": false
+  },
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"]
 } 

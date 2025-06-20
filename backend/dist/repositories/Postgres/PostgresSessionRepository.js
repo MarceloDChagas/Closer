@@ -13,80 +13,77 @@ exports.PostgresSessionRepository = void 0;
 const common_1 = require("@nestjs/common");
 const PrismaService_1 = require("../PrismaService");
 const SessionMapper_1 = require("./mappers/SessionMapper");
-let PostgresSessionRepository = class PostgresSessionRepository {
-    prisma;
+const ESessionStatus_1 = require("../../shared/Session/enums/ESessionStatus");
+let PostgresSessionRepository = exports.PostgresSessionRepository = class PostgresSessionRepository {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async save(session) {
-        const prismaData = (0, SessionMapper_1.mapToPrisma)(session);
+    async create(session) {
         await this.prisma.session.create({
-            data: prismaData,
+            data: SessionMapper_1.SessionMapper.toPersistence(session),
         });
     }
     async findById(id) {
-        const session = await this.prisma.session.findUnique({ where: { id } });
-        return session ? (0, SessionMapper_1.mapToDomain)(session) : null;
-    }
-    async findSessionsByClientId(clientId) {
-        const prismaSessions = await this.prisma.session.findMany({
-            where: { clientId },
+        const session = await this.prisma.session.findUnique({
+            where: { id },
         });
-        return prismaSessions.map(SessionMapper_1.mapToDomain);
-    }
-    async findSessionsInInterval(start, end) {
-        const prismaSessions = await this.prisma.session.findMany({
-            where: {
-                date: {
-                    gte: start,
-                    lte: end,
-                },
-            },
-        });
-        return prismaSessions.map(SessionMapper_1.mapToDomain);
+        return session ? SessionMapper_1.SessionMapper.toDomain(session) : null;
     }
     async delete(id) {
-        await this.prisma.session.delete({ where: { id } });
-    }
-    async update(session) {
-        const prismaData = (0, SessionMapper_1.mapToPrisma)(session);
-        await this.prisma.session.update({
-            where: { id: session.id },
-            data: prismaData,
+        await this.prisma.session.delete({
+            where: { id },
         });
     }
-    async findAll() {
-        const sessions = await this.prisma.session.findMany();
-        return sessions.map(SessionMapper_1.mapToDomain);
-    }
-    async findAvailableSessionsByDate(date) {
-        const prismaSessions = await this.prisma.session.findMany({
-            where: { date },
-        });
-        return prismaSessions.map(SessionMapper_1.mapToDomain);
-    }
-    async hasAvailableSession(clientId, date) {
-        const prismaSession = await this.prisma.session.findFirst({
-            where: { clientId, date },
-        });
-        return prismaSession ? true : false;
-    }
-    async create(session) {
-        await this.prisma.session.create({
-            data: {
-                ...(0, SessionMapper_1.mapToPrisma)(session),
-                id: session.id.toString(),
-                createdAt: new Date(),
+    async findAll(filters) {
+        const sessions = await this.prisma.session.findMany({
+            where: {
+                ...(filters?.serviceType && { serviceType: filters.serviceType }),
+                ...(filters?.status && { status: filters.status }),
+                ...(filters?.photoDeliveryStatus && { photoDeliveryStatus: filters.photoDeliveryStatus }),
             },
         });
+        return sessions.map(SessionMapper_1.SessionMapper.toDomain);
     }
     async deleteAll() {
         await this.prisma.session.deleteMany();
     }
+    async getQuantityOfSessions() {
+        return this.prisma.session.count();
+    }
+    async getQuantityOfSessionsThisMonth() {
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+        return this.prisma.session.count({
+            where: {
+                date: {
+                    gte: startOfMonth,
+                },
+            },
+        });
+    }
+    async getQuantityOfPendingSessions() {
+        return this.prisma.session.count({
+            where: { status: ESessionStatus_1.ESessionStatus.PENDING },
+        });
+    }
+    async getQuantityOfCompletedSessions() {
+        return this.prisma.session.count({
+            where: { status: ESessionStatus_1.ESessionStatus.COMPLETED },
+        });
+    }
+    async getQuantityOfCancelledSessions() {
+        return this.prisma.session.count({
+            where: { status: ESessionStatus_1.ESessionStatus.CANCELLED },
+        });
+    }
+    async getQuantityOfRefundedSessions() {
+        return this.prisma.session.count({
+            where: { status: ESessionStatus_1.ESessionStatus.REFUNDED },
+        });
+    }
 };
-exports.PostgresSessionRepository = PostgresSessionRepository;
 exports.PostgresSessionRepository = PostgresSessionRepository = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [PrismaService_1.PrismaService])
 ], PostgresSessionRepository);
-//# sourceMappingURL=PostgresSessionRepository.js.map

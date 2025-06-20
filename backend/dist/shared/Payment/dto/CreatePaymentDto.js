@@ -10,16 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreatePaymentDto = void 0;
-require("reflect-metadata");
 const class_validator_1 = require("class-validator");
 const EPaymentMethod_1 = require("../enums/EPaymentMethod");
 class CreatePaymentDto {
-    clientId;
-    sessionId;
-    amount;
-    currency;
-    status;
-    method;
 }
 exports.CreatePaymentDto = CreatePaymentDto;
 __decorate([
@@ -53,4 +46,8 @@ __decorate([
     (0, class_validator_1.IsEnum)(EPaymentMethod_1.EPaymentMethod),
     __metadata("design:type", String)
 ], CreatePaymentDto.prototype, "method", void 0);
-//# sourceMappingURL=CreatePaymentDto.js.map
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsDateString)(),
+    __metadata("design:type", String)
+], CreatePaymentDto.prototype, "dueDate", void 0);

@@ -1,34 +1,35 @@
-import { Client } from "../types/Client";
-import { Expose } from "class-transformer";
-import { ClientId } from "../vo/ClientId";
-import { Name } from "../vo/Name";
-import { Email } from "../vo/Email";
-import { Phone } from "../vo/Phone";
-import { Address } from "../vo/Address";
+import { Client } from '../types/Client';
 
 export class ClientResponseDto {
-  @Expose()
-  id!: ClientId;
-
-  @Expose()
-  name!: Name;
-
-  @Expose()
-  email!: Email;
-
-  @Expose()
-  phone!: Phone;
-
-  @Expose()
-  address!: Address;
+  id: string;
+  name: {
+    firstName: string;
+    lastName: string;
+  };
+  email: string;
+  phone: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
 
   static fromDomain(client: Client): ClientResponseDto {
-    const dto = new ClientResponseDto();
-    dto.id = client.id;
-    dto.name = client.name;
-    dto.email = client.email;
-    dto.phone = client.phone;
-    dto.address = client.address;
-    return dto;
+    return {
+      id: client.id.value,
+      name: {
+        firstName: client.name.firstName,
+        lastName: client.name.lastName,
+      },
+      email: client.email.value,
+      phone: client.phone.value,
+      address: {
+        street: client.address.street,
+        city: client.address.city,
+        state: client.address.state,
+        zipCode: client.address.zipCode,
+      },
+    };
   }
 } 

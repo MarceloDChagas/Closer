@@ -14,62 +14,230 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionController = void 0;
 const common_1 = require("@nestjs/common");
-const session_service_1 = require("./session.service");
-const CreateSessionDto_1 = require("../../shared/Session/dto/CreateSessionDto");
-const SessionResponseDto_1 = require("../../shared/Session/dto/SessionResponseDto");
-let SessionController = class SessionController {
-    sessionService;
-    constructor(sessionService) {
-        this.sessionService = sessionService;
+const PrismaService_1 = require("../../repositories/PrismaService");
+let SessionController = exports.SessionController = class SessionController {
+    constructor(prisma) {
+        this.prisma = prisma;
     }
-    async createSession(createSessionDto) {
-        const session = await this.sessionService.createSession(createSessionDto);
-        return SessionResponseDto_1.SessionResponseDto.fromDomain(session);
+    async createSession(createSessionData) {
+        return this.prisma.session.create({
+            data: {
+                date: new Date(createSessionData.date),
+                duration: createSessionData.duration,
+                status: createSessionData.status,
+                serviceType: createSessionData.serviceType,
+                photoDeliveryStatus: createSessionData.photoDeliveryStatus || 'NOT_DELIVERED',
+                clientId: createSessionData.clientId
+            },
+            include: {
+                client: true,
+                payment: true
+            }
+        });
     }
-    async findAllSessions() {
-        const sessions = await this.sessionService.findAllSessions();
-        return sessions.map(session => SessionResponseDto_1.SessionResponseDto.fromDomain(session));
+    async findAllSessions(page, limit, status) {
+        const pageNum = parseInt(page) || 1;
+        const limitNum = parseInt(limit) || 10;
+        const skip = (pageNum - 1) * limitNum;
+        const where = status ? { status } : {};
+        const [sessions, total] = await Promise.all([
+            this.prisma.session.findMany({
+                where,
+                skip,
+                take: limitNum,
+                include: {
+                    client: true,
+                    payment: true
+                },
+                orderBy: { date: 'desc' }
+            }),
+            this.prisma.session.count({ where })
+        ]);
+        const transformedSessions = sessions.map(session => {
+            if (session.client) {
+                return {
+                    ...session,
+                    client: {
+                        ...session.client,
+                        name: {
+                            firstName: session.client.firstName,
+                            lastName: session.client.lastName,
+                        },
+                        address: {
+                            street: session.client.street,
+                            city: session.client.city,
+                            state: session.client.state,
+                            zipCode: session.client.zipCode,
+                        }
+                    }
+                };
+            }
+            return session;
+        });
+        return {
+            sessions: transformedSessions,
+            total,
+            page: pageNum,
+            totalPages: Math.ceil(total / limitNum)
+        };
     }
-    async findSessionById(id) {
-        const session = await this.sessionService.findSessionById(id);
-        if (!session) {
-            throw new common_1.NotFoundException(`Session with ID ${id} not found`);
+    async getSessionsQuantity() {
+        const count = await this.prisma.session.count();
+        return { quantity: count };
+    }
+    async getSessionsThisMonth() {
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+        const count = await this.prisma.session.count({
+            where: {
+                date: { gte: startOfMonth }
+            }
+        });
+        return { quantity: count };
+    }
+    async getPendingSessions() {
+        const count = await this.prisma.session.count({
+            where: { status: 'PENDING' }
+        });
+        return { quantity: count };
+    }
+    async getCompletedSessions() {
+        const count = await this.prisma.session.count({
+            where: { status: 'COMPLETED' }
+        });
+        return { quantity: count };
+    }
+    async getCancelledSessions() {
+        const count = await this.prisma.session.count({
+            where: { status: 'CANCELLED' }
+        });
+        return { quantity: count };
+    }
+    async getRefundedSessions() {
+        const count = await this.prisma.session.count({
+            where: { status: 'REFUNDED' }
+        });
+        return { quantity: count };
+    }
+    async findOneSession(id) {
+        const session = await this.prisma.session.findUnique({
+            where: { id },
+            include: {
+                client: true,
+                payment: true
+            }
+        });
+        if (session && session.client) {
+            return {
+                ...session,
+                client: {
+                    ...session.client,
+                    name: {
+                        firstName: session.client.firstName,
+                        lastName: session.client.lastName,
+                    },
+                    address: {
+                        street: session.client.street,
+                        city: session.client.city,
+                        state: session.client.state,
+                        zipCode: session.client.zipCode,
+                    }
+                }
+            };
         }
-        return SessionResponseDto_1.SessionResponseDto.fromDomain(session);
+        return session;
     }
-    async deleteSession(id) {
-        const session = await this.sessionService.findSessionById(id);
-        if (!session) {
-            throw new common_1.NotFoundException(`Session with ID ${id} not found`);
-        }
-        await this.sessionService.deleteSession(id);
+    async updateSessionStatus(id, { status }) {
+        return this.prisma.session.update({
+            where: { id },
+            data: { status },
+        });
     }
-    async deleteAllSessions() {
-        await this.sessionService.deleteAllSessions();
+    async removeSession(id) {
+        await this.prisma.payment.deleteMany({
+            where: { sessionId: id }
+        });
+        return this.prisma.session.delete({
+            where: { id }
+        });
+    }
+    async removeAllSessions() {
+        await this.prisma.payment.deleteMany({
+            where: { sessionId: { not: null } }
+        });
+        await this.prisma.session.deleteMany();
+        return { message: 'All sessions deleted successfully' };
     }
 };
-exports.SessionController = SessionController;
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [CreateSessionDto_1.CreateSessionDto]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SessionController.prototype, "createSession", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('page')),
+    __param(1, (0, common_1.Query)('limit')),
+    __param(2, (0, common_1.Query)('status')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], SessionController.prototype, "findAllSessions", null);
+__decorate([
+    (0, common_1.Get)("stats/quantity"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], SessionController.prototype, "findAllSessions", null);
+], SessionController.prototype, "getSessionsQuantity", null);
+__decorate([
+    (0, common_1.Get)("stats/this-month"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], SessionController.prototype, "getSessionsThisMonth", null);
+__decorate([
+    (0, common_1.Get)("stats/pending"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], SessionController.prototype, "getPendingSessions", null);
+__decorate([
+    (0, common_1.Get)("stats/completed"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], SessionController.prototype, "getCompletedSessions", null);
+__decorate([
+    (0, common_1.Get)("stats/cancelled"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], SessionController.prototype, "getCancelledSessions", null);
+__decorate([
+    (0, common_1.Get)("stats/refunded"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], SessionController.prototype, "getRefundedSessions", null);
 __decorate([
     (0, common_1.Get)(":id"),
     __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], SessionController.prototype, "findSessionById", null);
+], SessionController.prototype, "findOneSession", null);
+__decorate([
+    (0, common_1.Patch)(":id/status"),
+    __param(0, (0, common_1.Param)("id")),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], SessionController.prototype, "updateSessionStatus", null);
 __decorate([
     (0, common_1.Delete)(":id"),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
@@ -77,16 +245,15 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], SessionController.prototype, "deleteSession", null);
+], SessionController.prototype, "removeSession", null);
 __decorate([
     (0, common_1.Delete)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], SessionController.prototype, "deleteAllSessions", null);
+], SessionController.prototype, "removeAllSessions", null);
 exports.SessionController = SessionController = __decorate([
     (0, common_1.Controller)("sessions"),
-    __metadata("design:paramtypes", [session_service_1.SessionService])
+    __metadata("design:paramtypes", [PrismaService_1.PrismaService])
 ], SessionController);
-//# sourceMappingURL=session.controller.js.map

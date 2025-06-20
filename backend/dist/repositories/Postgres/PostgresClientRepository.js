@@ -13,17 +13,16 @@ exports.PostgresClientRepository = void 0;
 const common_1 = require("@nestjs/common");
 const PrismaService_1 = require("../PrismaService");
 const ClientMapper_1 = require("./mappers/ClientMapper");
-let PostgresClientRepository = class PostgresClientRepository {
-    prisma;
+const EPaymentStatus_1 = require("../../shared/Payment/enums/EPaymentStatus");
+let PostgresClientRepository = exports.PostgresClientRepository = class PostgresClientRepository {
     constructor(prisma) {
         this.prisma = prisma;
     }
     async create(client) {
         await this.prisma.client.create({
             data: {
-                ...(0, ClientMapper_1.mapToPrisma)(client),
                 id: client.id.value,
-                createdAt: new Date(),
+                ...ClientMapper_1.ClientMapper.toPersistence(client),
             },
         });
     }
@@ -31,36 +30,68 @@ let PostgresClientRepository = class PostgresClientRepository {
         const client = await this.prisma.client.findUnique({
             where: { id },
             include: {
-                payments: true
-            }
+                name: true,
+                address: true,
+            },
         });
-        return client ? (0, ClientMapper_1.mapToDomain)(client) : null;
+        return client ? ClientMapper_1.ClientMapper.toDomain(client) : null;
+    }
+    async delete(id) {
+        await this.prisma.client.delete({
+            where: { id },
+        });
     }
     async findAll(paymentMethod) {
         const clients = await this.prisma.client.findMany({
-            where: paymentMethod ? {
-                payments: {
-                    some: {
-                        method: paymentMethod
-                    }
-                }
-            } : undefined,
             include: {
-                payments: true
-            }
+                name: true,
+                address: true,
+            },
         });
-        return clients.map(ClientMapper_1.mapToDomain);
-    }
-    async delete(id) {
-        await this.prisma.client.delete({ where: { id } });
+        return clients.map(ClientMapper_1.ClientMapper.toDomain);
     }
     async deleteAll() {
         await this.prisma.client.deleteMany();
     }
+    async getQuantityOfClients() {
+        return this.prisma.client.count();
+    }
+    async getQuantityOfNewClientsThisMonth() {
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+        return this.prisma.client.count({
+            where: {
+                createdAt: {
+                    gte: startOfMonth,
+                },
+            },
+        });
+    }
+    async getAllSessionsByClient(clientId) {
+        const sessions = await this.prisma.session.findMany({
+            where: { clientId },
+        });
+        return sessions;
+    }
+    async getAllClientsWithOwingMoney() {
+        const clients = await this.prisma.client.findMany({
+            where: {
+                payments: {
+                    some: {
+                        status: EPaymentStatus_1.EPaymentStatus.PENDING,
+                    },
+                },
+            },
+            include: {
+                name: true,
+                address: true,
+            },
+        });
+        return clients.map(ClientMapper_1.ClientMapper.toDomain);
+    }
 };
-exports.PostgresClientRepository = PostgresClientRepository;
 exports.PostgresClientRepository = PostgresClientRepository = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [PrismaService_1.PrismaService])
 ], PostgresClientRepository);
-//# sourceMappingURL=PostgresClientRepository.js.map

@@ -1,7 +1,8 @@
 export declare enum EPaymentMethod {
-    CREDIT_CARD = "credit_card",
-    DEBIT_CARD = "debit_card",
-    PIX = "pix",
-    BOLETO = "boleto",
-    CASH = "cash"
+    PIX = "PIX",
+    CREDIT_CARD = "CREDIT_CARD",
+    DEBIT_CARD = "DEBIT_CARD",
+    BANK_TRANSFER = "BANK_TRANSFER",
+    CASH = "CASH",
+    BOLETO = "BOLETO"
 }

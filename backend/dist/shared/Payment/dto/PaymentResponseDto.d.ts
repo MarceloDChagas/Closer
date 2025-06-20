@@ -1,12 +1,13 @@
-import { Payment } from "../types/Payment";
+import { Payment } from '../types/Payment';
 export declare class PaymentResponseDto {
     id: string;
     amount: number;
-    status: string;
     currency: string;
+    status: string;
     method: string;
     clientId: string;
     sessionId?: string;
-    createdAt: string;
+    dueDate?: Date;
+    createdAt: Date;
     static fromDomain(payment: Payment): PaymentResponseDto;
 }

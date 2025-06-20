@@ -1,9 +1,11 @@
-import { Session } from "../types/Session";
+import { Session } from '../types/Session';
 export declare class SessionResponseDto {
     id: string;
-    date: string;
+    date: Date;
     duration: number;
     status: string;
+    serviceType: string;
+    photoDeliveryStatus: string;
     clientId: string;
     static fromDomain(session: Session): SessionResponseDto;
 }

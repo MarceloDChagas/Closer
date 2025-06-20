@@ -1,14 +1,17 @@
-import { Client } from "../types/Client";
-import { ClientId } from "../vo/ClientId";
-import { Name } from "../vo/Name";
-import { Email } from "../vo/Email";
-import { Phone } from "../vo/Phone";
-import { Address } from "../vo/Address";
+import { Client } from '../types/Client';
 export declare class ClientResponseDto {
-    id: ClientId;
-    name: Name;
-    email: Email;
-    phone: Phone;
-    address: Address;
+    id: string;
+    name: {
+        firstName: string;
+        lastName: string;
+    };
+    email: string;
+    phone: string;
+    address: {
+        street: string;
+        city: string;
+        state: string;
+        zipCode: string;
+    };
     static fromDomain(client: Client): ClientResponseDto;
 }

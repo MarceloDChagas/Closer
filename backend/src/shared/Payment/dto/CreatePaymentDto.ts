@@ -1,11 +1,10 @@
-import "reflect-metadata";
-import { IsNotEmpty, IsString, IsNumber, IsPositive, IsEnum, IsOptional } from "class-validator";
-import { EPaymentMethod } from "../enums/EPaymentMethod";
+import { IsDateString, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
+import { EPaymentMethod } from '../enums/EPaymentMethod';
 
 export class CreatePaymentDto {
   @IsNotEmpty()
   @IsString()
-  clientId!: string;
+  clientId: string;
 
   @IsOptional()
   @IsString()
@@ -14,17 +13,21 @@ export class CreatePaymentDto {
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
-  amount!: number;
+  amount: number;
 
   @IsNotEmpty()
   @IsString()
-  currency!: string;
+  currency: string;
 
   @IsNotEmpty()
   @IsString()
-  status!: string;
+  status: string;
 
   @IsNotEmpty()
   @IsEnum(EPaymentMethod)
-  method!: EPaymentMethod;
+  method: EPaymentMethod;
+
+  @IsOptional()
+  @IsDateString()
+  dueDate?: string;
 } 

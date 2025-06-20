@@ -11,13 +11,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
-let AppController = class AppController {
+let AppController = exports.AppController = class AppController {
     constructor() { }
     getDocs() {
         return;
     }
 };
-exports.AppController = AppController;
 __decorate([
     (0, common_1.Get)(),
     (0, common_1.Redirect)('/api/docs', 301),
@@ -29,4 +28,3 @@ exports.AppController = AppController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [])
 ], AppController);
-//# sourceMappingURL=app.controller.js.map

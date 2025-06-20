@@ -1,0 +1,20 @@
+meta {
+  name: Criar Agendamento
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:3006/sessions
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "clientId": "c710f45a-bf5c-46e6-84d7-6f6a39f7cd7b",
+    "date": "2024-03-20T10:00:00Z",
+    "duration": 60,
+    "status": "SCHEDULED"
+  }
+}

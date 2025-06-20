@@ -1,13 +1,14 @@
-import { PaymentId } from "../vo/PaymentId";
-import { EPaymentMethod } from "../enums/EPaymentMethod";
+import { PaymentId } from '../vo/PaymentId';
+import { EPaymentMethod } from '../enums/EPaymentMethod';
 
-export type Payment = {
+export interface Payment {
   id: PaymentId;
   amount: number;
-  status: string;
   currency: string;
+  status: string;
   method: EPaymentMethod;
   clientId: string;
   sessionId?: string;
+  dueDate?: Date;
   createdAt: Date;
-}; 
+} 

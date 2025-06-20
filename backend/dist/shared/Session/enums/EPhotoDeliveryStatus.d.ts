@@ -1,0 +1,5 @@
+export declare enum EPhotoDeliveryStatus {
+    NOT_DELIVERED = "NOT_DELIVERED",
+    DELIVERED = "DELIVERED",
+    PARTIAL_DELIVERED = "PARTIAL_DELIVERED"
+}

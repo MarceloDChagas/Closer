@@ -16,6 +16,6 @@ const SESSION_REPOSITORY = 'SESSION_REPOSITORY';
       useClass: PostgresSessionRepository,
     },
   ],
-  exports: [SessionService],
+  exports: [SessionService, PrismaService],
 })
 export class SessionModule {}

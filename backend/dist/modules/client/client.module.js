@@ -13,9 +13,8 @@ const client_service_1 = require("./client.service");
 const PrismaService_1 = require("../../repositories/PrismaService");
 const PostgresClientRepository_1 = require("../../repositories/Postgres/PostgresClientRepository");
 const CLIENT_REPOSITORY = 'CLIENT_REPOSITORY';
-let ClientModule = class ClientModule {
+let ClientModule = exports.ClientModule = class ClientModule {
 };
-exports.ClientModule = ClientModule;
 exports.ClientModule = ClientModule = __decorate([
     (0, common_1.Module)({
         controllers: [client_controller_1.ClientController],
@@ -30,4 +29,3 @@ exports.ClientModule = ClientModule = __decorate([
         exports: [CLIENT_REPOSITORY, client_service_1.ClientService],
     })
 ], ClientModule);
-//# sourceMappingURL=client.module.js.map

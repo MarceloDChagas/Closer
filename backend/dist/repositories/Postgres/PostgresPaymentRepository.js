@@ -13,44 +13,84 @@ exports.PostgresPaymentRepository = void 0;
 const common_1 = require("@nestjs/common");
 const PrismaService_1 = require("../PrismaService");
 const PaymentMapper_1 = require("./mappers/PaymentMapper");
-let PostgresPaymentRepository = class PostgresPaymentRepository {
-    prisma;
+const ClientMapper_1 = require("./mappers/ClientMapper");
+const SessionMapper_1 = require("./mappers/SessionMapper");
+const EPaymentStatus_1 = require("../../shared/Payment/enums/EPaymentStatus");
+let PostgresPaymentRepository = exports.PostgresPaymentRepository = class PostgresPaymentRepository {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async findAll() {
-        const payments = await this.prisma.payment.findMany();
-        return payments.map(PaymentMapper_1.mapToDomain);
-    }
-    async findById(id) {
-        const payment = await this.prisma.payment.findUnique({ where: { id } });
-        return payment ? (0, PaymentMapper_1.mapToDomain)(payment) : null;
-    }
     async create(payment) {
         await this.prisma.payment.create({
-            data: {
-                ...(0, PaymentMapper_1.mapToPrisma)(payment),
-                id: payment.id,
-                createdAt: payment.createdAt,
-            },
+            data: PaymentMapper_1.PaymentMapper.toPersistence(payment),
         });
     }
     async update(payment) {
         await this.prisma.payment.update({
-            where: { id: payment.id },
-            data: (0, PaymentMapper_1.mapToPrisma)(payment),
+            where: { id: payment.id.toString() },
+            data: PaymentMapper_1.PaymentMapper.toPersistence(payment),
         });
     }
+    async findById(id) {
+        const payment = await this.prisma.payment.findUnique({
+            where: { id },
+        });
+        return payment ? PaymentMapper_1.PaymentMapper.toDomain(payment) : null;
+    }
+    async findAll() {
+        const payments = await this.prisma.payment.findMany();
+        return payments.map(PaymentMapper_1.PaymentMapper.toDomain);
+    }
     async delete(id) {
-        await this.prisma.payment.delete({ where: { id } });
+        await this.prisma.payment.delete({
+            where: { id },
+        });
     }
     async deleteAll() {
         await this.prisma.payment.deleteMany();
     }
+    async findClientById(clientId) {
+        const client = await this.prisma.client.findUnique({
+            where: { id: clientId },
+        });
+        return client ? ClientMapper_1.ClientMapper.toDomain(client) : null;
+    }
+    async findSessionById(sessionId) {
+        const session = await this.prisma.session.findUnique({
+            where: { id: sessionId },
+        });
+        return session ? SessionMapper_1.SessionMapper.toDomain(session) : null;
+    }
+    async getTotalAmountOfPaymentsPending() {
+        const result = await this.prisma.payment.aggregate({
+            where: { status: EPaymentStatus_1.EPaymentStatus.PENDING },
+            _sum: { amount: true },
+        });
+        return result._sum.amount || 0;
+    }
+    async getTotalAmountOfPaymentsPaid() {
+        const result = await this.prisma.payment.aggregate({
+            where: { status: EPaymentStatus_1.EPaymentStatus.COMPLETED },
+            _sum: { amount: true },
+        });
+        return result._sum.amount || 0;
+    }
+    async getTotalAmountOfPaymentsCancelled() {
+        const result = await this.prisma.payment.aggregate({
+            where: { status: EPaymentStatus_1.EPaymentStatus.CANCELLED },
+            _sum: { amount: true },
+        });
+        return result._sum.amount || 0;
+    }
+    async getTotalAmountOfPaymentsRefunded() {
+        const result = await this.prisma.payment.aggregate({
+            where: { status: EPaymentStatus_1.EPaymentStatus.REFUNDED },
+            _sum: { amount: true },
+        });
+        return result._sum.amount || 0;
+    }
 };
-exports.PostgresPaymentRepository = PostgresPaymentRepository;
 exports.PostgresPaymentRepository = PostgresPaymentRepository = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [PrismaService_1.PrismaService])
 ], PostgresPaymentRepository);
-//# sourceMappingURL=PostgresPaymentRepository.js.map

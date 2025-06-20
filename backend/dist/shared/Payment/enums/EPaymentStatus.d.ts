@@ -1,8 +1,7 @@
-export declare enum PaymentStatus {
+export declare enum EPaymentStatus {
     PENDING = "PENDING",
-    PROCESSING = "PROCESSING",
     COMPLETED = "COMPLETED",
-    FAILED = "FAILED",
+    CANCELLED = "CANCELLED",
     REFUNDED = "REFUNDED",
-    CANCELLED = "CANCELLED"
+    FAILED = "FAILED"
 }

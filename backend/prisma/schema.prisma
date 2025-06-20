@@ -30,31 +30,34 @@ model Client {
 }
 
 model Session {
-  id        String   @id @default(uuid())
-  date      DateTime
-  duration  Int
-  status    String
-  clientId  String
-  client    Client   @relation(fields: [clientId], references: [id])
-  payment   Payment?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String   @id @default(uuid())
+  date                DateTime
+  duration            Int
+  status              String
+  serviceType         String   // Type of service: Newborn, Gestante, Casamento, etc.
+  photoDeliveryStatus String   @default("NOT_DELIVERED") // NOT_DELIVERED, DELIVERED
+  clientId            String
+  client              Client   @relation(fields: [clientId], references: [id])
+  payment             Payment?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   @@index([clientId])
 }
 
 model Payment {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   amount    Float
   currency  String
   status    String
   method    String
+  dueDate   DateTime? // Due date for payment
   clientId  String
-  client    Client   @relation(fields: [clientId], references: [id])
-  sessionId String?  @unique
-  session   Session? @relation(fields: [sessionId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  client    Client    @relation(fields: [clientId], references: [id])
+  sessionId String?   @unique
+  session   Session?  @relation(fields: [sessionId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@index([clientId])
   @@index([sessionId])

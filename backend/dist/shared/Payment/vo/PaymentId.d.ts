@@ -1,5 +1,4 @@
 export declare class PaymentId {
-    private readonly value;
+    readonly value: string;
     constructor(value: string);
-    toString(): string;
 }

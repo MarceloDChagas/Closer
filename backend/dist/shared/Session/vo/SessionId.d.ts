@@ -1,5 +1,4 @@
 export declare class SessionId {
-    private readonly value;
+    readonly value: string;
     constructor(value: string);
-    toString(): string;
 }

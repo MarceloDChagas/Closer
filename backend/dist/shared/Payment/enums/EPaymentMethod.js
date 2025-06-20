@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EPaymentMethod = void 0;
 var EPaymentMethod;
 (function (EPaymentMethod) {
-    EPaymentMethod["CREDIT_CARD"] = "credit_card";
-    EPaymentMethod["DEBIT_CARD"] = "debit_card";
-    EPaymentMethod["PIX"] = "pix";
-    EPaymentMethod["BOLETO"] = "boleto";
-    EPaymentMethod["CASH"] = "cash";
+    EPaymentMethod["PIX"] = "PIX";
+    EPaymentMethod["CREDIT_CARD"] = "CREDIT_CARD";
+    EPaymentMethod["DEBIT_CARD"] = "DEBIT_CARD";
+    EPaymentMethod["BANK_TRANSFER"] = "BANK_TRANSFER";
+    EPaymentMethod["CASH"] = "CASH";
+    EPaymentMethod["BOLETO"] = "BOLETO";
 })(EPaymentMethod || (exports.EPaymentMethod = EPaymentMethod = {}));
-//# sourceMappingURL=EPaymentMethod.js.map

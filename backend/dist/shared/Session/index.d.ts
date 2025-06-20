@@ -1,10 +1,8 @@
 export * from './types/Session';
-export * from './types/PhotoPackage';
-export * from './enums/ESessionStatus';
-export * from './enums/EPackageType';
-export * from './enums/EPhotoSessionCategory';
 export * from './dto/CreateSessionDto';
-export * from './dto/CreatePhotoPackageDto';
+export * from './dto/SessionResponseDto';
+export * from './vo/SessionId';
 export * from './vo/SystemClock';
-export * from './constants/PhotoPackages';
-export { getPackagesByCategory, getPackageById, getPackagesByLocation, getPackagesByPriceRange, } from './constants/PhotoPackages';
+export * from './enums/ESessionStatus';
+export * from './enums/EServiceType';
+export * from './enums/EPhotoDeliveryStatus';

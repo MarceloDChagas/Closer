@@ -1,28 +1,33 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mapToPrisma = mapToPrisma;
-exports.mapToDomain = mapToDomain;
+exports.PaymentMapper = void 0;
 const PaymentId_1 = require("../../../shared/Payment/vo/PaymentId");
-function mapToPrisma(payment) {
-    return {
-        amount: payment.amount,
-        status: payment.status,
-        currency: payment.currency,
-        method: payment.method,
-        clientId: payment.clientId,
-        sessionId: payment.sessionId || null,
-    };
+class PaymentMapper {
+    static toDomain(payment) {
+        return {
+            id: new PaymentId_1.PaymentId(payment.id),
+            amount: payment.amount,
+            currency: payment.currency,
+            status: payment.status,
+            method: payment.method,
+            clientId: payment.clientId,
+            sessionId: payment.sessionId,
+            dueDate: payment.dueDate ? new Date(payment.dueDate) : undefined,
+            createdAt: new Date(payment.createdAt),
+        };
+    }
+    static toPersistence(payment) {
+        return {
+            id: payment.id.value,
+            amount: payment.amount,
+            currency: payment.currency,
+            status: payment.status,
+            method: payment.method,
+            clientId: payment.clientId,
+            sessionId: payment.sessionId,
+            dueDate: payment.dueDate,
+            createdAt: payment.createdAt || new Date(),
+        };
+    }
 }
-function mapToDomain(payment) {
-    return {
-        id: new PaymentId_1.PaymentId(payment.id),
-        amount: payment.amount,
-        status: payment.status,
-        currency: payment.currency,
-        method: payment.method,
-        clientId: payment.clientId,
-        sessionId: payment.sessionId || undefined,
-        createdAt: payment.createdAt,
-    };
-}
-//# sourceMappingURL=PaymentMapper.js.map
+exports.PaymentMapper = PaymentMapper;

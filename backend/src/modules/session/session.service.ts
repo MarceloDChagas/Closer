@@ -4,8 +4,15 @@ import { Session } from "@shared/Session/types/Session";
 import { CreateSessionDto } from "@shared/Session/dto/CreateSessionDto";
 import { SystemClock } from "@shared/Session/vo/SystemClock";
 import { SessionId } from "@shared/Session/vo/SessionId";
+import { EPhotoDeliveryStatus } from "@shared/Session/enums/EPhotoDeliveryStatus";
 
 const SESSION_REPOSITORY = 'SESSION_REPOSITORY';
+
+interface SessionFilters {
+  serviceType?: string;
+  status?: string;
+  photoDeliveryStatus?: string;
+}
 
 @Injectable()
 export class SessionService {
@@ -20,6 +27,8 @@ export class SessionService {
       date: new SystemClock(new Date(createSessionDto.date)),
       duration: createSessionDto.duration,
       status: createSessionDto.status,
+      serviceType: createSessionDto.serviceType,
+      photoDeliveryStatus: createSessionDto.photoDeliveryStatus || EPhotoDeliveryStatus.NOT_DELIVERED,
       clientId: createSessionDto.clientId,
     };
 
@@ -35,11 +44,35 @@ export class SessionService {
     await this.sessionRepository.delete(id);
   }
 
-  async findAllSessions(): Promise<Session[]> {
-    return this.sessionRepository.findAll();
+  async findAllSessions(filters?: SessionFilters): Promise<Session[]> {
+    return this.sessionRepository.findAll(filters);
   }
 
   async deleteAllSessions(): Promise<void> {
     await this.sessionRepository.deleteAll();
+  }
+
+  async getQuantityOfSessions(): Promise<number> {
+    return this.sessionRepository.getQuantityOfSessions();
+  }
+
+  async getQuantityOfSessionsThisMonth(): Promise<number> {
+    return this.sessionRepository.getQuantityOfSessionsThisMonth();
+  }
+
+  async getQuantityOfPendingSessions(): Promise<number> {
+    return this.sessionRepository.getQuantityOfPendingSessions();
+  }
+
+  async getQuantityOfCompletedSessions(): Promise<number> {
+    return this.sessionRepository.getQuantityOfCompletedSessions();
+  }
+
+  async getQuantityOfCancelledSessions(): Promise<number> {
+    return this.sessionRepository.getQuantityOfCancelledSessions();
+  }
+
+  async getQuantityOfRefundedSessions(): Promise<number> {
+    return this.sessionRepository.getQuantityOfRefundedSessions();
   }
 }

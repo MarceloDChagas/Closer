@@ -8,7 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrismaClientExceptionFilter = void 0;
 const common_1 = require("@nestjs/common");
-let PrismaClientExceptionFilter = class PrismaClientExceptionFilter {
+let PrismaClientExceptionFilter = exports.PrismaClientExceptionFilter = class PrismaClientExceptionFilter {
     catch(exception, host) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
@@ -33,8 +33,6 @@ let PrismaClientExceptionFilter = class PrismaClientExceptionFilter {
         }
     }
 };
-exports.PrismaClientExceptionFilter = PrismaClientExceptionFilter;
 exports.PrismaClientExceptionFilter = PrismaClientExceptionFilter = __decorate([
     (0, common_1.Catch)()
 ], PrismaClientExceptionFilter);
-//# sourceMappingURL=PrismaClientExceptionFilter.js.map

@@ -10,14 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateSessionDto = void 0;
-require("reflect-metadata");
 const class_validator_1 = require("class-validator");
 const ESessionStatus_1 = require("../enums/ESessionStatus");
+const EServiceType_1 = require("../enums/EServiceType");
+const EPhotoDeliveryStatus_1 = require("../enums/EPhotoDeliveryStatus");
 class CreateSessionDto {
-    clientId;
-    date;
-    duration;
-    status;
 }
 exports.CreateSessionDto = CreateSessionDto;
 __decorate([
@@ -41,4 +38,13 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateSessionDto.prototype, "status", void 0);
-//# sourceMappingURL=CreateSessionDto.js.map
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateSessionDto.prototype, "serviceType", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateSessionDto.prototype, "photoDeliveryStatus", void 0);

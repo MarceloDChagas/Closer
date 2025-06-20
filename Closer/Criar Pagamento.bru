@@ -1,0 +1,22 @@
+meta {
+  name: Criar Pagamento
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:3006/payments
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "clientId": "c710f45a-bf5c-46e6-84d7-6f6a39f7cd7b",
+    "sessionId": "6e7db318-4277-4287-9222-82e7ee1a9dc8", 
+    "amount": 150.50,
+    "currency": "BRL",
+    "status": "PENDING",
+    "method": "credit_card"
+  }
+}

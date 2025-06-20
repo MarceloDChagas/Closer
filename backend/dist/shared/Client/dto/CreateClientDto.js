@@ -9,14 +9,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateClientDto = void 0;
-require("reflect-metadata");
+exports.CreateClientDto = exports.AddressDto = exports.NameDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 class NameDto {
-    firstName;
-    lastName;
 }
+exports.NameDto = NameDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsString)(),
@@ -28,36 +26,29 @@ __decorate([
     __metadata("design:type", String)
 ], NameDto.prototype, "lastName", void 0);
 class AddressDto {
-    street;
-    city;
-    state;
-    zipCode;
 }
+exports.AddressDto = AddressDto;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], AddressDto.prototype, "street", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], AddressDto.prototype, "city", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], AddressDto.prototype, "state", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], AddressDto.prototype, "zipCode", void 0);
 class CreateClientDto {
-    name;
-    email;
-    phone;
-    address;
 }
 exports.CreateClientDto = CreateClientDto;
 __decorate([
@@ -78,10 +69,9 @@ __decorate([
     __metadata("design:type", String)
 ], CreateClientDto.prototype, "phone", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsObject)(),
     (0, class_validator_1.ValidateNested)(),
     (0, class_transformer_1.Type)(() => AddressDto),
     __metadata("design:type", AddressDto)
 ], CreateClientDto.prototype, "address", void 0);
-//# sourceMappingURL=CreateClientDto.js.map

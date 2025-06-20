@@ -1,15 +1,5 @@
 import { Payment } from "@shared/Payment/types/Payment";
-type PrismaPayment = {
-    id: string;
-    amount: number;
-    status: string;
-    currency: string;
-    method: string;
-    clientId: string;
-    sessionId: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-};
-export declare function mapToPrisma(payment: Payment): Omit<PrismaPayment, "id" | "createdAt" | "updatedAt">;
-export declare function mapToDomain(payment: PrismaPayment): Payment;
-export {};
+export declare class PaymentMapper {
+    static toDomain(payment: any): Payment;
+    static toPersistence(payment: Payment): any;
+}
