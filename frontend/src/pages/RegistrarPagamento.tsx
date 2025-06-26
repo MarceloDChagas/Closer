@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "../components/ui/button";
 import { ScrollHeader } from "../components/scroll-header";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { ArrowLeft, CreditCard, DollarSign, Calendar, User, Package, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
@@ -13,7 +14,7 @@ import { PaymentStatus, PaymentMethod, Client, Session } from "../types";
 import { formatDate } from "../utils/helpers";
 
 const RegistrarPagamento: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState<Client[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -146,7 +147,7 @@ const RegistrarPagamento: React.FC = () => {
       });
 
       setTimeout(() => {
-        navigate('/pagamentos');
+        router.push('/pagamentos');
       }, 2000);
 
     } catch (error: any) {
@@ -159,7 +160,7 @@ const RegistrarPagamento: React.FC = () => {
 
   const handleCancel = () => {
     if (window.confirm("Deseja cancelar o registro? Todos os dados serão perdidos.")) {
-      navigate('/pagamentos');
+              router.push('/pagamentos');
     }
   };
 
@@ -177,10 +178,10 @@ const RegistrarPagamento: React.FC = () => {
       <main className="flex-1">
         <div className="container py-6">
           <div className="flex items-center mb-6">
-            <Button variant="ghost" size="sm" className="mr-2" onClick={() => navigate('/pagamentos')}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
-                  </Button>
+                      <Button variant="ghost" size="sm" className="mr-2" onClick={() => router.push('/pagamentos')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
+          </Button>
             <h1 className="text-3xl font-bold">Registrar Novo Pagamento</h1>
           </div>
 

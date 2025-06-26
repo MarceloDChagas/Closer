@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "../components/ui/button"
 import { ScrollHeader } from "../components/scroll-header"
-import { Link } from "react-router-dom"
+import Link from 'next/link'
 import { Users, DollarSign, Camera, CheckCircle, AlertCircle, TrendingUp, Calendar, Clock } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import { ApiService } from "../services/api"
@@ -149,25 +149,25 @@ const Home: React.FC = () => {
                   <CardDescription>Acesse as funcionalidades principais do sistema</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Link to="/clientes/cadastro" className="block">
+                  <Link href="/clientes/cadastro" className="block">
                     <Button className="w-full justify-start" variant="outline">
                       <Users className="mr-2 h-4 w-4" />
                       Cadastrar Novo Cliente
                     </Button>
                   </Link>
-                  <Link to="/clientes/adicionar-servico" className="block">
+                  <Link href="/clientes/adicionar-servico" className="block">
                     <Button className="w-full justify-start" variant="outline">
                       <Camera className="mr-2 h-4 w-4" />
                       Registrar Novo Serviço
                     </Button>
                   </Link>
-                  <Link to="/servicos" className="block">
+                  <Link href="/servicos" className="block">
                     <Button className="w-full justify-start" variant="outline">
                       <Calendar className="mr-2 h-4 w-4" />
                       Gerenciar Serviços
                     </Button>
                   </Link>
-                  <Link to="/pagamentos" className="block">
+                  <Link href="/pagamentos" className="block">
                     <Button className="w-full justify-start" variant="outline">
                       <DollarSign className="mr-2 h-4 w-4" />
                       Controlar Recebimentos

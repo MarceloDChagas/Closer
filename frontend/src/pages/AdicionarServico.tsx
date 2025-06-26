@@ -6,7 +6,8 @@ import { Label } from "../components/ui/label"
 import { Textarea } from "../components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { ArrowLeft, Plus } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
+import Link from "next/link"
+import { useRouter } from "next/router"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
 import { Checkbox } from "../components/ui/checkbox"
 import { ClienteSelector } from "../components/cliente-selector"
@@ -14,7 +15,7 @@ import { ApiService } from "../services/api"
 import serviceTypeDefaults from '../utils/service.type.defaults';
 
 const AdicionarServicoPage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     clientId: '',
     serviceType: '',
@@ -137,7 +138,7 @@ const AdicionarServicoPage: React.FC = () => {
       await ApiService.createPayment(paymentData);
 
       alert('Sessão registrada com sucesso!');
-      navigate('/servicos');
+      router.push('/servicos');
 
     } catch (error) {
       console.error('Erro ao registrar sessão:', error);
@@ -158,13 +159,13 @@ const AdicionarServicoPage: React.FC = () => {
         <div className="container py-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
-              <Button variant="ghost" size="sm" className="mr-2" onClick={() => navigate('/servicos')}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Voltar
-              </Button>
+                        <Button variant="ghost" size="sm" className="mr-2" onClick={() => router.push('/servicos')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
+          </Button>
               <h1 className="text-3xl font-bold">Registrar Sessão/Serviço</h1>
             </div>
-            <Link to="/clientes/cadastro">
+            <Link href="/clientes/cadastro">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Cliente
@@ -323,9 +324,9 @@ const AdicionarServicoPage: React.FC = () => {
               </form>
             </CardContent>
             <CardFooter className="flex justify-end space-x-4">
-              <Button variant="outline" type="button" onClick={() => navigate('/servicos')} disabled={isLoading}>
-                Cancelar
-              </Button>
+                        <Button variant="outline" type="button" onClick={() => router.push('/servicos')} disabled={isLoading}>
+            Cancelar
+          </Button>
               <Button type="submit" onClick={handleSubmit} disabled={isLoading}>
                 {isLoading ? 'Salvando...' : 'Registrar Sessão'}
               </Button>

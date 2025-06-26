@@ -1,5 +1,14 @@
 {
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js"
+  "/clientes": "pages/clientes.html",
+  "/clientes/cadastro": "pages/clientes/cadastro.html",
+  "/clientes/registrar-pagamento": "pages/clientes/registrar-pagamento.html",
+  "/": "pages/index.html",
+  "/clientes/adicionar-servico": "pages/clientes/adicionar-servico.html",
+  "/pagamentos": "pages/pagamentos.html",
+  "/relatorios": "pages/relatorios.html",
+  "/servicos": "pages/servicos.html",
+  "/_document": "pages/_document.js",
+  "/404": "pages/404.html"
 }

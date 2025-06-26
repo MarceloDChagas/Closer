@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react"
 import { Button } from "./ui/button"
 import { ModeToggle } from "./mode-toggle"
-import { Link, useLocation } from "react-router-dom"
+import Link from "next/link"
+import { useRouter } from "next/router"
 import { cn } from "../lib/utils"
 import { Menu, Home, Users, CreditCard, Package, FileText } from "lucide-react"
 import {
@@ -17,7 +18,7 @@ import {
 
 export function ScrollHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
-  const location = useLocation()
+  const router = useRouter()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,31 +41,31 @@ export function ScrollHeader() {
       href: "/",
       label: "Início",
       icon: Home,
-      active: location.pathname === "/",
+      active: router.pathname === "/",
     },
     {
       href: "/clientes",
       label: "Clientes",
       icon: Users,
-      active: location.pathname.startsWith("/clientes"),
+      active: router.pathname.startsWith("/clientes"),
     },
     {
       href: "/servicos",
       label: "Serviços & Sessões",
       icon: Package,
-      active: location.pathname.startsWith("/servicos"),
+      active: router.pathname.startsWith("/servicos"),
     },
     {
       href: "/pagamentos",
       label: "Pagamentos & Faturas",
       icon: CreditCard,
-      active: location.pathname.startsWith("/pagamentos"),
+      active: router.pathname.startsWith("/pagamentos"),
     },
     {
       href: "/relatorios",
       label: "Relatórios",
       icon: FileText,
-      active: location.pathname.startsWith("/relatorios"),
+      active: router.pathname.startsWith("/relatorios"),
     },
   ]
 
@@ -93,7 +94,7 @@ export function ScrollHeader() {
                 {routes.map((route) => (
                   <Link
                     key={route.href}
-                    to={route.href}
+                    href={route.href}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
                       route.active ? "bg-accent text-accent-foreground" : "text-muted-foreground"
@@ -106,14 +107,14 @@ export function ScrollHeader() {
               </nav>
             </SheetContent>
           </Sheet>
-          <Link to="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2">
             <div className="font-bold text-xl text-foreground">CLOSER</div>
           </Link>
           <nav className="hidden lg:flex items-center space-x-6 ml-6">
             {routes.map((route) => (
               <Link
                 key={route.href}
-                to={route.href}
+                href={route.href}
                 className={cn(
                   "flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary",
                   route.active ? "text-foreground" : "text-muted-foreground"

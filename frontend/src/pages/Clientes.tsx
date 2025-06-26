@@ -5,7 +5,7 @@ import { Input } from "../components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { UserCircle, Search, Plus, Edit } from "lucide-react"
-import { Link } from "react-router-dom"
+import Link from 'next/link'
 import { ApiService } from "../services/api"
 import { PaymentStatus, PhotoDeliveryStatus } from "../types"
 import { getPaymentStatusColor, getPhotoDeliveryStatusColor, getPaymentStatusLabel, getPhotoDeliveryStatusLabel } from "../utils/helpers"
@@ -101,13 +101,13 @@ const ClientesPage: React.FC = () => {
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-bold text-foreground">Controle de Clientes</h1>
             <div className="flex items-center gap-2">
-              <Link to="/clientes/adicionar-servico">
+              <Link href="/clientes/adicionar-servico">
                 <Button variant="outline">
                   <Plus className="h-4 w-4 mr-2" />
                   Registrar Serviço
                 </Button>
               </Link>
-              <Link to="/clientes/cadastro">
+              <Link href="/clientes/cadastro">
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
                   Novo Cliente
@@ -260,7 +260,7 @@ const ClientesPage: React.FC = () => {
                               <Edit className="h-3 w-3 mr-1" />
                               Editar
                             </Button>
-                            <Link to={`/clientes/${client.id}`}>
+                            <Link href={`/clientes/${client.id}`}>
                               <Button variant="ghost" size="sm">
                                 Ver detalhes
                               </Button>

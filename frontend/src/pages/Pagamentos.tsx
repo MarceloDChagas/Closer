@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { Search, Plus, DollarSign, CreditCard, Edit, Check, X, TrendingUp, AlertCircle, FileText, Download, Mail, MessageSquare, Calendar, CheckCircle, XCircle } from "lucide-react"
-import { Link } from "react-router-dom"
+import Link from 'next/link'
 import { ApiService } from "../services/api"
 import { PaymentStatus, PaymentMethod } from "../types"
 import { getPaymentStatusColor, getPaymentStatusLabel, getPaymentMethodLabel, formatCurrency, formatDate } from "../utils/helpers"
@@ -429,7 +429,7 @@ const PagamentosPage: React.FC = () => {
                 <Plus className="h-4 w-4 mr-2" />
                 Nova Fatura
               </Button>
-              <Link to="/clientes/registrar-pagamento">
+              <Link href="/clientes/registrar-pagamento">
                 <Button variant="outline">
                   <Plus className="h-4 w-4 mr-2" />
                   Novo Pagamento

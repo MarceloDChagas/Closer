@@ -9,7 +9,7 @@ import { Search, Camera, MapPin, Edit, Eye, Plus, DollarSign, Package } from "lu
 import { SessionStatus, PhotoDeliveryStatus, ServiceType, Session, PaymentStatus } from "../types"
 import { getSessionStatusColor, getSessionStatusLabel, getPhotoDeliveryStatusColor, getPhotoDeliveryStatusLabel, getServiceTypeLabel, formatCurrency, formatDate, formatDateTime } from "../utils/helpers"
 import { ApiService } from "../services/api"
-import { Link } from "react-router-dom"
+import Link from 'next/link'
 
 interface SessionWithDetails extends Session {
   client?: {
@@ -202,7 +202,7 @@ const ServicosPage: React.FC = () => {
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-bold text-foreground">Serviços & Sessões</h1>
             <div className="flex items-center gap-2">
-              <Link to="/clientes/adicionar-servico">
+              <Link href="/clientes/adicionar-servico">
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
                   Nova Sessão

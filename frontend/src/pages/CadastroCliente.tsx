@@ -6,11 +6,11 @@ import { Label } from "../components/ui/label"
 import { Textarea } from "../components/ui/textarea"
 import { ArrowLeft, Upload, User } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/router"
 import { ApiService } from "../services/api"
 
 const CadastroClientePage: React.FC = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -126,7 +126,7 @@ const CadastroClientePage: React.FC = () => {
       setSelectedImage(null)
 
       // Redirecionar para a lista de clientes
-      navigate('/clientes')
+      router.push('/clientes')
 
     } catch (error) {
       console.error("Erro ao cadastrar cliente:", error)
@@ -138,7 +138,7 @@ const CadastroClientePage: React.FC = () => {
 
   const handleCancel = () => {
     if (window.confirm("Deseja cancelar o cadastro? Todos os dados serão perdidos.")) {
-      navigate(-1)
+              router.back()
     }
   }
 
@@ -152,10 +152,10 @@ const CadastroClientePage: React.FC = () => {
       <main className="flex-1">
         <div className="container py-6">
           <div className="flex items-center mb-6">
-            <Button variant="ghost" size="sm" className="mr-2" onClick={() => navigate(-1)}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
-            </Button>
+                      <Button variant="ghost" size="sm" className="mr-2" onClick={() => router.back()}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
+          </Button>
             <h1 className="text-3xl font-bold">Cadastrar Novo Cliente</h1>
           </div>
 
