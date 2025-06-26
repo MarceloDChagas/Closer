@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "../components/ui/button"
 import { ScrollHeader } from "../components/scroll-header"
 import { Input } from "../components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
-import { Search, Calendar, Camera, MapPin, Edit, Eye, CheckCircle, XCircle, AlertTriangle, Plus } from "lucide-react"
-import { SessionStatus, PhotoDeliveryStatus, ServiceType, Session } from "../types"
+import { Search, Camera, MapPin, Edit, Eye, Plus, DollarSign, Package } from "lucide-react"
+import { SessionStatus, PhotoDeliveryStatus, ServiceType, Session, PaymentStatus } from "../types"
 import { getSessionStatusColor, getSessionStatusLabel, getPhotoDeliveryStatusColor, getPhotoDeliveryStatusLabel, getServiceTypeLabel, formatCurrency, formatDate, formatDateTime } from "../utils/helpers"
 import { ApiService } from "../services/api"
+import { Link } from "react-router-dom"
 
 interface SessionWithDetails extends Session {
   client?: {
@@ -19,6 +20,12 @@ interface SessionWithDetails extends Session {
     };
     email: string;
     phone: string;
+  };
+  payment?: {
+    id: string;
+    amount: number;
+    status: PaymentStatus;
+    method: string;
   };
 }
 
@@ -33,20 +40,11 @@ const ServicosPage: React.FC = () => {
   // Stats das sessões
   const [sessionStats, setSessionStats] = useState({
     totalSessions: 0,
-    scheduledSessions: 0,
-    completedSessions: 0,
-    pendingDeliveries: 0
+    pendingDeliveries: 0,
+    pendingPayments: 0
   });
 
-  useEffect(() => {
-    fetchSessions();
-  }, [statusFilter, serviceFilter, photoStatusFilter]);
-
-  useEffect(() => {
-    calculateSessionStats();
-  }, [sessions]);
-
-    const fetchSessions = async () => {
+  const fetchSessions = useCallback(async () => {
       try {
       setLoading(true);
       const filters = {
@@ -80,75 +78,82 @@ const ServicosPage: React.FC = () => {
       } finally {
         setLoading(false);
       }
-    };
+    }, [statusFilter, serviceFilter, photoStatusFilter]);
 
-  const calculateSessionStats = () => {
+  const calculateSessionStats = useCallback(() => {
     if (!Array.isArray(sessions)) {
       setSessionStats({
         totalSessions: 0,
-        scheduledSessions: 0,
-        completedSessions: 0,
-        pendingDeliveries: 0
+        pendingDeliveries: 0,
+        pendingPayments: 0
       });
       return;
     }
 
     const stats = sessions.reduce((acc, session) => {
       acc.totalSessions++;
-      
-      switch (session.status) {
-        case SessionStatus.SCHEDULED:
-        case SessionStatus.IN_PROGRESS:
-          acc.scheduledSessions++;
-          break;
-        case SessionStatus.COMPLETED:
-          acc.completedSessions++;
-          break;
-    }
 
       if (session.photoDeliveryStatus === PhotoDeliveryStatus.NOT_DELIVERED || 
           session.photoDeliveryStatus === PhotoDeliveryStatus.PARTIAL_DELIVERED) {
         acc.pendingDeliveries++;
       }
 
+      // Assumindo que se não há payment ou status é PENDING, então está pendente
+      // Esta lógica pode precisar ser ajustada baseada na estrutura real dos dados
+      if (!session.payment || session.payment?.status === PaymentStatus.PENDING) {
+        acc.pendingPayments++;
+      }
+
       return acc;
     }, {
       totalSessions: 0,
-      scheduledSessions: 0,
-      completedSessions: 0,
-      pendingDeliveries: 0
+      pendingDeliveries: 0,
+      pendingPayments: 0
     });
 
     setSessionStats(stats);
-  };
+  }, [sessions]);
 
-  const handleCompleteSession = async (sessionId: string) => {
+  useEffect(() => {
+    fetchSessions();
+  }, [fetchSessions]);
+
+  useEffect(() => {
+    calculateSessionStats();
+  }, [calculateSessionStats]);
+
+  const handleMarkPhotoAsDelivered = async (sessionId: string) => {
     try {
-      await ApiService.updateSessionStatus(sessionId, SessionStatus.COMPLETED);
+      await ApiService.updateSessionPhotoDeliveryStatus(sessionId, PhotoDeliveryStatus.DELIVERED);
       setSessions(prev => 
         prev.map(session => 
           session.id === sessionId 
-            ? { ...session, status: SessionStatus.COMPLETED, updatedAt: new Date().toISOString() }
+            ? { ...session, photoDeliveryStatus: PhotoDeliveryStatus.DELIVERED, updatedAt: new Date().toISOString() }
             : session
         )
       );
     } catch (error) {
-      console.error('Erro ao concluir sessão:', error);
+      console.error('Erro ao marcar foto como entregue:', error);
     }
   };
 
-  const handleCancelSession = async (sessionId: string) => {
+  const handleMarkPaymentAsCompleted = async (sessionId: string) => {
     try {
-      await ApiService.updateSessionStatus(sessionId, SessionStatus.CANCELLED);
-      setSessions(prev => 
-        prev.map(session => 
-          session.id === sessionId 
-            ? { ...session, status: SessionStatus.CANCELLED, updatedAt: new Date().toISOString() }
-            : session
-        )
-      );
+      // Assumindo que existe um método para atualizar o status do pagamento da sessão
+      // Esta implementação pode precisar ser ajustada baseada na API real
+      const session = sessions.find(s => s.id === sessionId);
+      if (session?.payment?.id) {
+        await ApiService.updatePaymentStatus(session.payment.id, PaymentStatus.COMPLETED);
+        setSessions(prev => 
+          prev.map(s => 
+            s.id === sessionId && s.payment
+              ? { ...s, payment: { ...s.payment, status: PaymentStatus.COMPLETED }, updatedAt: new Date().toISOString() }
+              : s
+          )
+        );
+      }
     } catch (error) {
-      console.error('Erro ao cancelar sessão:', error);
+      console.error('Erro ao marcar pagamento como pago:', error);
     }
   };
 
@@ -197,10 +202,12 @@ const ServicosPage: React.FC = () => {
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-bold text-foreground">Serviços & Sessões</h1>
             <div className="flex items-center gap-2">
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Sessão
-              </Button>
+              <Link to="/clientes/adicionar-servico">
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova Sessão
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -223,45 +230,30 @@ const ServicosPage: React.FC = () => {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Agendadas</CardTitle>
-                <Calendar className="h-4 w-4 text-orange-600" />
+                <CardTitle className="text-sm font-medium">Clientes com Fotos Pendentes</CardTitle>
+                <Package className="h-4 w-4 text-orange-600" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-orange-600">
-                  {sessionStats.scheduledSessions}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Sessões futuras/em andamento
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Concluídas</CardTitle>
-                <CheckCircle className="h-4 w-4 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-600">
-                  {sessionStats.completedSessions}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Sessões finalizadas
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Entregas Pendentes</CardTitle>
-                <AlertTriangle className="h-4 w-4 text-yellow-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-yellow-600">
                   {sessionStats.pendingDeliveries}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Fotos não entregues
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Clientes com Pagamentos Pendentes</CardTitle>
+                <DollarSign className="h-4 w-4 text-yellow-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-yellow-600">
+                  {sessionStats.pendingPayments}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Pagamentos não recebidos
                 </p>
               </CardContent>
             </Card>
@@ -285,10 +277,9 @@ const ServicosPage: React.FC = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os status</SelectItem>
-                <SelectItem value={SessionStatus.SCHEDULED}>Agendada</SelectItem>
-                <SelectItem value={SessionStatus.IN_PROGRESS}>Em Andamento</SelectItem>
-                <SelectItem value={SessionStatus.COMPLETED}>Concluída</SelectItem>
+                <SelectItem value={SessionStatus.COMPLETED}>Completada</SelectItem>
                 <SelectItem value={SessionStatus.CANCELLED}>Cancelada</SelectItem>
+                <SelectItem value={SessionStatus.REFUNDED}>Reembolsada</SelectItem>
               </SelectContent>
             </Select>
             <Select value={serviceFilter} onValueChange={(value) => setServiceFilter(value === 'all' ? 'all' : value)}>
@@ -344,15 +335,12 @@ const ServicosPage: React.FC = () => {
                   </TableRow>
                 ) : (
                   filteredSessions.map((session) => {
-                    const sessionDate = new Date(session.date);
-                    const isUpcoming = sessionDate > new Date() && session.status === SessionStatus.SCHEDULED;
-                    
                     return (
-                      <TableRow key={session.id} className={`cursor-pointer hover:bg-muted/50 border-b border-border ${isUpcoming ? 'bg-blue-50 dark:bg-blue-950/20' : ''}`}>
+                      <TableRow key={session.id} className="cursor-pointer hover:bg-muted/50 border-b border-border">
                         <TableCell>
                           <div>
                             <div className="font-medium text-foreground">
-                              {session.client ? `${session.client.name.firstName} ${session.client.name.lastName}` : 'Cliente não encontrado'}
+                              {session.client?.name ? `${session.client.name.firstName} ${session.client.name.lastName}` : 'Cliente não encontrado'}
                             </div>
                             <div className="text-sm text-muted-foreground">
                               {session.client?.phone || '-'}
@@ -403,27 +391,27 @@ const ServicosPage: React.FC = () => {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex gap-2 justify-end">
-                            {(session.status === SessionStatus.SCHEDULED || session.status === SessionStatus.IN_PROGRESS) && (
-                              <>
-                                <Button 
-                                  size="sm" 
-                                  variant="outline"
-                                  className="text-green-600 border-green-600 hover:bg-green-50 dark:hover:bg-green-950"
-                                  onClick={() => handleCompleteSession(session.id)}
-                                >
-                                  <CheckCircle className="h-3 w-3 mr-1" />
-                                  Concluir
-                                </Button>
-                                <Button 
-                                  size="sm" 
-                                  variant="outline"
-                                  className="text-red-600 border-red-600 hover:bg-red-50 dark:hover:bg-red-950"
-                                  onClick={() => handleCancelSession(session.id)}
-                                >
-                                  <XCircle className="h-3 w-3 mr-1" />
-                                  Cancelar
-                                </Button>
-                              </>
+                            {session.photoDeliveryStatus !== PhotoDeliveryStatus.DELIVERED && (
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                className="text-blue-600 border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950"
+                                onClick={() => handleMarkPhotoAsDelivered(session.id)}
+                              >
+                                <Package className="h-3 w-3 mr-1" />
+                                Entregar Foto
+                              </Button>
+                            )}
+                            {session.payment && session.payment.status !== PaymentStatus.COMPLETED && (
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                className="text-green-600 border-green-600 hover:bg-green-50 dark:hover:bg-green-950"
+                                onClick={() => handleMarkPaymentAsCompleted(session.id)}
+                              >
+                                <DollarSign className="h-3 w-3 mr-1" />
+                                Marcar Pago
+                              </Button>
                             )}
                             <Button size="sm" variant="outline">
                               <Eye className="h-3 w-3 mr-1" />

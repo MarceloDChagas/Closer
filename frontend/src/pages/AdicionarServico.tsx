@@ -23,7 +23,6 @@ const AdicionarServicoPage: React.FC = () => {
     qtdFotos: '',
     valor: '',
     desconto: '',
-    dataVencimento: '',
     observacoes: '',
     fotosEntregues: false
   });
@@ -97,12 +96,12 @@ const AdicionarServicoPage: React.FC = () => {
     }
 
     if (!formData.date) {
-      alert('Por favor, informe a data do serviço');
+      alert('Por favor, informe a data da sessão');
       return;
     }
 
     if (!formData.valor) {
-      alert('Por favor, informe o valor do serviço');
+      alert('Por favor, informe o valor da sessão');
       return;
     }
 
@@ -117,7 +116,7 @@ const AdicionarServicoPage: React.FC = () => {
       const sessionData = {
         date: formData.date,
         duration: 120, // Duração padrão de 2 horas
-        status: 'SCHEDULED',
+        status: 'COMPLETED',
         serviceType: formData.serviceType,
         photoDeliveryStatus: formData.fotosEntregues ? 'DELIVERED' : 'NOT_DELIVERED',
         clientId: formData.clientId
@@ -131,19 +130,18 @@ const AdicionarServicoPage: React.FC = () => {
         currency: 'BRL',
         status: 'PENDING',
         method: 'PIX',
-        dueDate: formData.dataVencimento,
         clientId: formData.clientId,
         sessionId: session.id
       };
 
       await ApiService.createPayment(paymentData);
 
-      alert('Serviço adicionado com sucesso!');
+      alert('Sessão registrada com sucesso!');
       navigate('/servicos');
 
     } catch (error) {
-      console.error('Erro ao adicionar serviço:', error);
-      alert('Erro ao adicionar serviço. Tente novamente.');
+      console.error('Erro ao registrar sessão:', error);
+      alert('Erro ao registrar sessão. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
@@ -160,11 +158,11 @@ const AdicionarServicoPage: React.FC = () => {
         <div className="container py-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
-              <Button variant="ghost" size="sm" className="mr-2" onClick={() => navigate('/clientes')}>
+              <Button variant="ghost" size="sm" className="mr-2" onClick={() => navigate('/servicos')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar
               </Button>
-              <h1 className="text-3xl font-bold">Adicionar Serviço</h1>
+              <h1 className="text-3xl font-bold">Registrar Sessão/Serviço</h1>
             </div>
             <Link to="/clientes/cadastro">
               <Button>
@@ -176,8 +174,8 @@ const AdicionarServicoPage: React.FC = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Detalhes do Serviço</CardTitle>
-              <CardDescription>Preencha as informações do novo serviço</CardDescription>
+              <CardTitle>Detalhes da Sessão/Serviço</CardTitle>
+              <CardDescription>Preencha as informações da nova sessão ou serviço</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -238,13 +236,14 @@ const AdicionarServicoPage: React.FC = () => {
                     )}
 
                     <div className="space-y-2">
-                      <Label htmlFor="dataServico">Data do Serviço</Label>
+                      <Label htmlFor="dataServico">Data da Sessão</Label>
                       <Input 
                         id="dataServico" 
                         type="date" 
                         value={formData.date}
                         onChange={(e) => handleInputChange('date', e.target.value)}
                       />
+                      <p className="text-xs text-muted-foreground">Data em que a sessão foi realizada</p>
                     </div>
 
                     <div className="space-y-2">
@@ -308,15 +307,6 @@ const AdicionarServicoPage: React.FC = () => {
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="dataVencimento">Data de Vencimento</Label>
-                      <Input 
-                        id="dataVencimento" 
-                        type="date"
-                        value={formData.dataVencimento}
-                        onChange={(e) => handleInputChange('dataVencimento', e.target.value)}
-                      />
-                    </div>
                   </div>
                 </div>
 
@@ -337,7 +327,7 @@ const AdicionarServicoPage: React.FC = () => {
                 Cancelar
               </Button>
               <Button type="submit" onClick={handleSubmit} disabled={isLoading}>
-                {isLoading ? 'Salvando...' : 'Salvar Serviço'}
+                {isLoading ? 'Salvando...' : 'Registrar Sessão'}
               </Button>
             </CardFooter>
           </Card>

@@ -7,6 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import { ApiService } from "../services/api"
 import { DashboardStats } from "../services/interfaces"
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert"
+import { StatsCard } from "../components/StatsCard"
+import { LoadingSpinner } from "../components/LoadingSpinner"
+import { PageFooter } from "../components/PageFooter"
 
 const Home: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -39,17 +42,7 @@ const Home: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <ScrollHeader />
-        <main className="flex-1 pt-16 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Carregando estatísticas...</p>
-          </div>
-        </main>
-      </div>
-    );
+    return <LoadingSpinner message="Carregando estatísticas..." />;
   }
 
   if (error && !stats) {
@@ -59,7 +52,6 @@ const Home: React.FC = () => {
         <main className="flex-1 pt-16">
           <div className="container px-4 md:px-6 py-8">
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
               <AlertTitle>Erro</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
@@ -93,107 +85,60 @@ const Home: React.FC = () => {
           <div className="container px-4 md:px-6">
             {/* Main Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total de Clientes</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats?.totalClients || 0}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {stats?.newClientsThisMonth || 0} novo{stats?.newClientsThisMonth !== 1 ? 's' : ''} este mês
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Valores a Receber</CardTitle>
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {formatCurrency(stats?.pendingAmount || 0)}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {stats?.pendingSessions || 0} serviço{stats?.pendingSessions !== 1 ? 's' : ''} pendente{stats?.pendingSessions !== 1 ? 's' : ''}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Sessões Este Mês</CardTitle>
-                  <Camera className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats?.sessionsThisMonth || 0}</div>
-                  <p className="text-xs text-muted-foreground">
-                    Total de {stats?.totalSessions || 0} sessões
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Fotos Entregues</CardTitle>
-                  <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats?.deliveredPhotos || 0}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {stats?.pendingPhotos || 0} pendente{stats?.pendingPhotos !== 1 ? 's' : ''} de entrega
-                  </p>
-                </CardContent>
-              </Card>
+              <StatsCard
+                title="Total de Clientes"
+                value={stats?.totalClients || 0}
+                description={`${stats?.newClientsThisMonth || 0} novo${stats?.newClientsThisMonth !== 1 ? 's' : ''} este mês`}
+                icon={Users}
+              />
+              <StatsCard
+                title="Valores a Receber"
+                value={formatCurrency(stats?.pendingAmount || 0)}
+                description={`${stats?.pendingSessions || 0} serviço${stats?.pendingSessions !== 1 ? 's' : ''} pendente${stats?.pendingSessions !== 1 ? 's' : ''}`}
+                icon={DollarSign}
+              />
+              <StatsCard
+                title="Sessões Este Mês"
+                value={stats?.sessionsThisMonth || 0}
+                description={`Total de ${stats?.totalSessions || 0} sessões`}
+                icon={Camera}
+                iconColor="text-blue-600"
+              />
+              <StatsCard
+                title="Fotos Entregues"
+                value={stats?.deliveredPhotos || 0}
+                description={`${stats?.pendingPhotos || 0} pendente${stats?.pendingPhotos !== 1 ? 's' : ''} de entrega`}
+                icon={CheckCircle}
+                iconColor="text-green-600"
+              />
             </div>
 
             {/* Additional Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">
-                    {formatCurrency(stats?.totalRevenue || 0)}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Total recebido
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Sessões Completadas</CardTitle>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats?.completedSessions || 0}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {stats?.cancelledSessions || 0} cancelada{stats?.cancelledSessions !== 1 ? 's' : ''}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Taxa de Conclusão</CardTitle>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {stats && stats.totalSessions > 0 
-                      ? Math.round((stats.completedSessions / stats.totalSessions) * 100)
-                      : 0}%
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    De sessões finalizadas
-                  </p>
-                </CardContent>
-              </Card>
+              <StatsCard
+                title="Receita Total"
+                value={formatCurrency(stats?.totalRevenue || 0)}
+                description="Total recebido"
+                icon={TrendingUp}
+                iconColor="text-green-600"
+                valueColor="text-green-600"
+              />
+              <StatsCard
+                title="Clientes com Fotos Pendentes"
+                value={stats?.pendingPhotos || 0}
+                description="Precisam receber fotos"
+                icon={Camera}
+                iconColor="text-yellow-600"
+                valueColor="text-yellow-600"
+              />
+              <StatsCard
+                title="Clientes com Pagamentos Pendentes"
+                value={stats?.pendingSessions || 0}
+                description="Precisam efetuar pagamento"
+                icon={Calendar}
+                iconColor="text-red-600"
+                valueColor="text-red-600"
+              />
             </div>
 
             {/* Quick Actions */}
@@ -235,15 +180,7 @@ const Home: React.FC = () => {
         </section>
       </main>
 
-      <footer className="border-t bg-muted/50 mt-auto">
-        <div className="container flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/images/logo-closer.png" alt="Estudio Closer" width={24} height={24} />
-            <div className="font-medium text-foreground">ESTUDIO CLOSER</div>
-          </div>
-          <p className="text-sm text-muted-foreground">© 2025 Estudio Closer. Sistema de Gerenciamento.</p>
-        </div>
-      </footer>
+      <PageFooter />
     </div>
   )
 }

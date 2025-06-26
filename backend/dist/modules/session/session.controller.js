@@ -154,6 +154,12 @@ let SessionController = exports.SessionController = class SessionController {
             data: { status },
         });
     }
+    async updatePhotoDeliveryStatus(id, { photoDeliveryStatus }) {
+        return this.prisma.session.update({
+            where: { id },
+            data: { photoDeliveryStatus },
+        });
+    }
     async removeSession(id) {
         await this.prisma.payment.deleteMany({
             where: { sessionId: id }
@@ -238,6 +244,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], SessionController.prototype, "updateSessionStatus", null);
+__decorate([
+    (0, common_1.Patch)(":id/photo-delivery-status"),
+    __param(0, (0, common_1.Param)("id")),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], SessionController.prototype, "updatePhotoDeliveryStatus", null);
 __decorate([
     (0, common_1.Delete)(":id"),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),

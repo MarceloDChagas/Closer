@@ -189,15 +189,25 @@ const ClientesPage: React.FC = () => {
                   filteredClients.map((client) => {
                     const lastSession = client.sessions?.[0];
                     const lastPayment = client.payments?.[0] || lastSession?.payment;
+                    const hasPendingPayment = lastPayment?.status === PaymentStatus.PENDING;
                     
                     return (
-                      <TableRow key={client.id} className="cursor-pointer hover:bg-muted/50 border-b border-border">
+                      <TableRow 
+                        key={client.id} 
+                        className={`cursor-pointer hover:bg-muted/50 border-b border-border ${
+                          hasPendingPayment ? 'bg-red-50 dark:bg-red-950/20' : ''
+                        }`}
+                      >
                         <TableCell>
                           <div className="flex items-center">
                             <UserCircle className="h-8 w-8 mr-2 text-muted-foreground" />
-                            <div>
-                              <div className="font-medium text-foreground">{client.firstName} {client.lastName}</div>
-                              <div className="text-sm text-muted-foreground">{client.email}</div>
+                            <div className={`p-2 rounded-md ${hasPendingPayment ? 'bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800' : ''}`}>
+                              <div className={`font-medium ${hasPendingPayment ? 'text-red-800 dark:text-red-200' : 'text-foreground'}`}>
+                                {client.firstName} {client.lastName}
+                              </div>
+                              <div className={`text-sm ${hasPendingPayment ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}`}>
+                                {client.email}
+                              </div>
                             </div>
                           </div>
                         </TableCell>

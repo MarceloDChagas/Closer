@@ -38,6 +38,9 @@ export declare class SessionController {
     updateSessionStatus(id: string, { status }: {
         status: string;
     }): Promise<any>;
+    updatePhotoDeliveryStatus(id: string, { photoDeliveryStatus }: {
+        photoDeliveryStatus: string;
+    }): Promise<any>;
     removeSession(id: string): Promise<any>;
     removeAllSessions(): Promise<{
         message: string;

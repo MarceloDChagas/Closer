@@ -30,7 +30,7 @@ const App: React.FC = () => {
             <Route path="/clientes/adicionar-servico" element={<AdicionarServicoPage />} />
             <Route path="/pagamentos" element={<PagamentosPage />} />
             <Route path="/relatorios" element={<RelatoriosPage />} />
-            <Route path="/pagamentos/registrar" element={<RegistrarPagamentoPage />} />
+            <Route path="/clientes/registrar-pagamento" element={<RegistrarPagamentoPage />} />
           </Routes>
         </Router>
       </ThemeProvider>

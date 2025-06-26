@@ -195,6 +195,17 @@ export class SessionController {
     });
   }
 
+  @Patch(":id/photo-delivery-status")
+  async updatePhotoDeliveryStatus(
+    @Param("id") id: string,
+    @Body() { photoDeliveryStatus }: { photoDeliveryStatus: string },
+  ) {
+    return this.prisma.session.update({
+      where: { id },
+      data: { photoDeliveryStatus },
+    });
+  }
+
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeSession(@Param("id") id: string) {

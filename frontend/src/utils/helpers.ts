@@ -38,9 +38,6 @@ export const getPaymentStatusColor = (status: PaymentStatus): string => {
 // Session helpers
 export const getSessionStatusLabel = (status: SessionStatus): string => {
   const labels: Record<SessionStatus, string> = {
-    [SessionStatus.PENDING]: 'Pendente',
-    [SessionStatus.SCHEDULED]: 'Agendada',
-    [SessionStatus.IN_PROGRESS]: 'Em Andamento',
     [SessionStatus.COMPLETED]: 'Completada',
     [SessionStatus.CANCELLED]: 'Cancelada',
     [SessionStatus.REFUNDED]: 'Reembolsada'
@@ -82,9 +79,6 @@ export const getServiceTypeLabel = (type: ServiceType): string => {
 
 export const getSessionStatusColor = (status: SessionStatus): string => {
   const colors: Record<SessionStatus, string> = {
-    [SessionStatus.PENDING]: 'bg-yellow-500/15 text-yellow-800 dark:bg-yellow-500/40 dark:text-yellow-100 border border-yellow-500/30 dark:border-yellow-400',
-    [SessionStatus.SCHEDULED]: 'bg-blue-500/15 text-blue-800 dark:bg-blue-500/40 dark:text-blue-100 border border-blue-500/30 dark:border-blue-400',
-    [SessionStatus.IN_PROGRESS]: 'bg-purple-500/15 text-purple-800 dark:bg-purple-500/40 dark:text-purple-100 border border-purple-500/30 dark:border-purple-400',
     [SessionStatus.COMPLETED]: 'bg-green-500/15 text-green-800 dark:bg-green-500/40 dark:text-green-100 border border-green-500/30 dark:border-green-400',
     [SessionStatus.CANCELLED]: 'bg-red-500/15 text-red-800 dark:bg-red-500/40 dark:text-red-100 border border-red-500/30 dark:border-red-400',
     [SessionStatus.REFUNDED]: 'bg-orange-500/15 text-orange-800 dark:bg-orange-500/40 dark:text-orange-100 border border-orange-500/30 dark:border-orange-400'
